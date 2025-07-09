@@ -7,7 +7,7 @@
     "moduleResolution": "NodeNext",
     "noEmitOnError": true,
     "paths": {
-      "fake-geolocation": ["./src/index.ts"]
+      "impasto": ["./src/index.ts"]
     },
     "skipLibCheck": true,
     "sourceMap": true,

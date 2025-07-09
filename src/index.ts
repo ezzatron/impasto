@@ -1,1 +1,1 @@
-export const placeholder = "placeholder";
+export { createHighlighter } from "./highlighter.js";
