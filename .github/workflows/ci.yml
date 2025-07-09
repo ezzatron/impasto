@@ -1,0 +1,11 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  ci:
+    name: Ezzatron
+    uses: ezzatron/repos/.github/workflows/shared-ci-node-library.yml@main
+    secrets: inherit
