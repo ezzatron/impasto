@@ -1,8 +1,13 @@
 {
   "excludeInternal": true,
   "externalSymbolLinkMappings": {
+    "@types/hast": {
+      "Root": "https://github.com/syntax-tree/hast?#root"
+    },
     "@wooorm/starry-night": {
-      "createStarryNight": "https://github.com/wooorm/starry-night#createstarrynightgrammars-options"
+      "createStarryNight": "https://github.com/wooorm/starry-night#createstarrynightgrammars-options",
+      "Grammar": "https://github.com/wooorm/starry-night#grammar",
+      "Options": "https://github.com/wooorm/starry-night#options"
     }
   },
   "navigationLinks": {
@@ -15,5 +20,7 @@
     "notDocumented": true,
     "unusedMergeModuleWith": true
   },
-  "visibilityFilters": {}
+  "visibilityFilters": {},
+
+  "plugin": ["typedoc-plugin-mdn-links"]
 }

@@ -13,14 +13,14 @@ export interface Highlighter
    * Get the grammar scope (such as `text.md`) associated with a grammar name
    * (such as `markdown`) or grammar extension (such as `.md`).
    *
-   * @see {@link https://github.com/wooorm/starry-night?tab=readme-ov-file#starrynightflagtoscopeflag}
+   * @see {@link https://github.com/wooorm/starry-night#starrynightflagtoscopeflag}
    */
   flagToScope: (flag: string | undefined) => string | undefined;
 
   /**
    * Highlight code as an HTML AST.
    *
-   * @see {@link https://github.com/wooorm/starry-night?tab=readme-ov-file#starrynighthighlightvalue-scope}
+   * @see {@link https://github.com/wooorm/starry-night#starrynighthighlightvalue-scope}
    */
   highlight: (value: string, scope: string | undefined) => Root;
 }
