@@ -1,15 +1,37 @@
 import { createStarryNight } from "@wooorm/starry-night";
 import type { Root } from "hast";
 
-export type Highlighter = Awaited<ReturnType<typeof createStarryNight>> & {
+/**
+ * A thin wrapper around starry-night, with support for undefined flags and
+ * scopes.
+ *
+ * @see {@link createStarryNight}
+ */
+export interface Highlighter
+  extends Awaited<ReturnType<typeof createStarryNight>> {
+  /**
+   * Get the grammar scope (such as `text.md`) associated with a grammar name
+   * (such as `markdown`) or grammar extension (such as `.md`).
+   *
+   * @see {@link https://github.com/wooorm/starry-night?tab=readme-ov-file#starrynightflagtoscopeflag}
+   */
   flagToScope: (flag: string | undefined) => string | undefined;
+
+  /**
+   * Highlight code as an HTML AST.
+   *
+   * @see {@link https://github.com/wooorm/starry-night?tab=readme-ov-file#starrynighthighlightvalue-scope}
+   */
   highlight: (value: string, scope: string | undefined) => Root;
-};
+}
 
 declare global {
   var highlighter: Promise<Highlighter> | undefined;
 }
 
+/**
+ * Creates a highlighter.
+ */
 export async function createHighlighter(
   ...args: Parameters<typeof createStarryNight>
 ): Promise<Highlighter> {

@@ -1,0 +1,19 @@
+{
+  "excludeInternal": true,
+  "externalSymbolLinkMappings": {
+    "@wooorm/starry-night": {
+      "createStarryNight": "https://github.com/wooorm/starry-night#createstarrynightgrammars-options"
+    }
+  },
+  "navigationLinks": {
+    "GitHub": "https://github.com/ezzatron/impasto"
+  },
+  "validation": {
+    "notExported": true,
+    "invalidLink": true,
+    "rewrittenLink": true,
+    "notDocumented": true,
+    "unusedMergeModuleWith": true
+  },
+  "visibilityFilters": {}
+}
