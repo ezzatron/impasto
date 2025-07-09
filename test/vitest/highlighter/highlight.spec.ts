@@ -4,45 +4,27 @@ import { expect, it } from "vitest";
 
 it("highlights code", async () => {
   const highlighter = await createHighlighter(all);
+  const tree = highlighter.highlight("1", "source.js");
 
-  expect(await highlighter.highlight("1", "source.js")).toMatchInlineSnapshot(`
-    {
-      "children": [
-        {
-          "children": [
-            {
-              "type": "text",
-              "value": "1",
-            },
-          ],
-          "properties": {
-            "className": [
-              "pl-c1",
-            ],
-          },
-          "tagName": "span",
-          "type": "element",
-        },
-      ],
-      "type": "root",
-    }
-  `);
+  expect(tree).toMatchObject({
+    type: "root",
+    children: [
+      {
+        type: "element",
+        tagName: "span",
+        properties: { className: ["pl-c1"] },
+        children: [{ type: "text", value: "1" }],
+      },
+    ],
+  });
 });
 
 it("supports undefined flags", async () => {
   const highlighter = await createHighlighter(all);
+  const tree = highlighter.highlight("a", undefined);
 
-  expect(await highlighter.highlight("a", undefined)).toMatchInlineSnapshot(
-    `
-    {
-      "children": [
-        {
-          "type": "text",
-          "value": "a",
-        },
-      ],
-      "type": "root",
-    }
-  `,
-  );
+  expect(tree).toMatchObject({
+    type: "root",
+    children: [{ type: "text", value: "a" }],
+  });
 });
