@@ -24,6 +24,11 @@
       "types": "./artifacts/dist/index.d.ts",
       "import": "./artifacts/dist/index.js",
       "default": "./artifacts/dist/index.js"
+    },
+    "./lang/*": {
+      "types": "./artifacts/dist/lang/*.d.ts",
+      "import": "./artifacts/dist/lang/*.js",
+      "default": "./artifacts/dist/lang/*.js"
     }
   },
   "sideEffects": false,
@@ -36,6 +41,7 @@
   "dependencies": {
     "@types/hast": "^3.0.4",
     "@wooorm/starry-night": "^3.8.0",
+    "hast-util-class-list": "^2.0.1",
     "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {

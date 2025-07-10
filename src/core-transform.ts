@@ -1,7 +1,34 @@
-import type { Element, ElementContent, Root } from "hast";
+import type { Element, ElementContent, Root, Text } from "hast";
+import createClassList from "hast-util-class-list";
 import { visit } from "unist-util-visit";
 import { codeBlock, line, space, tab } from "./css-class.js";
 import type { Transform } from "./transform.js";
+
+/**
+ * Matches annotations.
+ *
+ * The pattern is:
+ * - \s? - optional whitespace
+ * - \[! - annotation start
+ * - ([\w-]+) - annotation name
+ * - (?:\s+(.+?))? - optional annotation value
+ * - ] - annotation end
+ * - \s? - optional whitespace
+ */
+const annotationPattern = /\s?\[!([\w-]+)(?:\s+(.+?))?]\s?/g;
+
+/**
+ * Matches comments.
+ *
+ * The pattern is:
+ * - (\s*(?:\/\/|\/\*|<!--|#|--|%%?|;;?|"|')) - comment start
+ * - \s+ - whitespace
+ * - (.*?) - comment content (non-greedy)
+ * - \s* - optional whitespace
+ * - ((?:\*\/|-->)\s*)? - optional comment end
+ */
+const commentPattern =
+  /^(\s*(?:\/\/|\/\*|<!--|#|--|%%?|;;?|"|')\s+)(.*?)\s*((?:\*\/|-->)\s*)?$/;
 
 const whitespacePattern = /[ \t]/g;
 
@@ -9,6 +36,31 @@ const whitespaceClassMap: Record<string, string> = {
   " ": space,
   "\t": tab,
 };
+
+/**
+ * A parsed annotation.
+ */
+export interface Annotation {
+  /**
+   * The annotation name.
+   */
+  name: string;
+
+  /**
+   * The annotation value.
+   */
+  value: string;
+}
+
+/**
+ * The result of the core transform.
+ */
+export interface CoreTransformResult {
+  /**
+   * Annotations found in the code.
+   */
+  annotations: Record<string, Annotation[]>;
+}
 
 /**
  * The core transform.
@@ -23,14 +75,19 @@ const whitespaceClassMap: Record<string, string> = {
  * - Line splitting — Each line's content is wrapped with `<div class="imp-l">`
  * - Trimming/collapsing empty lines
  * - Trimming trailing whitespace from lines
- * - TODO: Annotation parsing
+ * - Annotation parsing
  * - TODO: Sections
  * - Whitespace wrapping — Spaces are wrapped with `<span class="imp-s">`, and
  *   tabs are wrapped with `<span class="imp-t">`
  */
-export const coreTransform: Transform = (tree) => {
+export const coreTransform: Transform<CoreTransformResult> = (tree) => {
   const lines = splitLines(tree);
-  cleanupLines(lines);
+
+  const annotations: Record<string, Annotation[]> = {};
+  const annotationComments: Map<Text, AnnotationComment> = new Map();
+  parseAnnotations(annotations, annotationComments, lines);
+
+  cleanupLines(lines, annotationComments);
   wrapWhitespace(lines);
 
   tree.children = [
@@ -48,6 +105,8 @@ export const coreTransform: Transform = (tree) => {
       ],
     },
   ];
+
+  return { annotations };
 };
 
 function splitLines(tree: Root): Element[] {
@@ -93,12 +152,49 @@ function splitLines(tree: Root): Element[] {
   return lines;
 }
 
-function cleanupLines(lines: Element[]): void {
+function cleanupLines(
+  lines: Element[],
+  annotationComments: Map<Text, AnnotationComment>,
+): void {
   let isFollowingEmpty = false;
 
   // process lines in reverse order
   for (let i = lines.length - 1; i >= 0; --i) {
     const line = lines[i];
+
+    // strip annotations
+    let wasCommentRemoved = false;
+
+    for (let j = line.children.length - 1; j >= 0; --j) {
+      const text = getCommentText(line.children[j]);
+      if (!text) continue;
+
+      // skip non-annotation comments
+      const comment = annotationComments.get(text);
+      if (!comment) continue;
+
+      const { start, end = "" } = comment;
+      const content = comment.content.replaceAll(annotationPattern, " ").trim();
+
+      if (content) {
+        // comment still has content after stripping annotations
+        text.value = `${start}${content}${end}`;
+      } else {
+        wasCommentRemoved = true;
+
+        if (isJSXComment(line.children[j - 1], line.children[j + 1])) {
+          line.children.splice(j - 1, 3);
+          j -= 2; // account for the two additional elements that were removed
+        } else {
+          line.children.splice(j, 1);
+        }
+      }
+    }
+
+    if (wasCommentRemoved && isEmptyLine(line)) {
+      lines.splice(i, 1);
+      continue;
+    }
 
     // strip trailing whitespace from children in reverse order
     for (let j = line.children.length - 1; j >= 0; --j) {
@@ -209,4 +305,75 @@ function isEmptyLine(line: Element): boolean {
   }
 
   return true;
+}
+
+interface AnnotationComment {
+  start: string;
+  content: string;
+  end: string;
+}
+
+function parseAnnotations(
+  annotations: Record<string, Annotation[]>,
+  annotationComments: Map<Text, AnnotationComment>,
+  lines: Element[],
+): void {
+  for (let i = 0; i < lines.length; ++i) {
+    const line = lines[i];
+    annotations[i] = [];
+
+    for (let j = 0; j < line.children.length; ++j) {
+      const text = getCommentText(line.children[j]);
+      if (!text) continue;
+
+      const commentMatch = text.value.match(commentPattern);
+      if (!commentMatch) continue;
+      const annotationMatches = Array.from(
+        commentMatch[2].matchAll(annotationPattern),
+      );
+      if (annotationMatches.length < 1) continue;
+
+      const [, start, content, end] = commentMatch;
+      annotationComments.set(text, { start, content, end });
+
+      for (const [, name, value] of annotationMatches) {
+        annotations[i].push({ name, value });
+      }
+    }
+  }
+}
+
+function getCommentText(node: ElementContent): Text | undefined {
+  if (node.type !== "element") return undefined;
+  if (node.children.length !== 1) return undefined;
+
+  const [text] = node.children;
+
+  if (text.type !== "text") return undefined;
+
+  return createClassList(node).contains("pl-c") ? text : undefined;
+}
+
+function isJSXComment(
+  prevSibling: ElementContent | undefined,
+  nextSibling: ElementContent | undefined,
+): boolean {
+  if (prevSibling?.type !== "element") return false;
+  if (prevSibling.children.length !== 1) return false;
+  if (nextSibling?.type !== "element") return false;
+  if (nextSibling.children.length !== 1) return false;
+
+  const [prevText] = prevSibling.children;
+  const [nextText] = nextSibling.children;
+
+  if (prevText.type !== "text") return false;
+  if (nextText.type !== "text") return false;
+
+  if (prevText.value !== "{") return false;
+  if (nextText.value !== "}") return false;
+
+  return (
+    createClassList(prevSibling).contains("pl-pse") &&
+    createClassList(nextSibling).contains("pl-pse")
+  );
 }

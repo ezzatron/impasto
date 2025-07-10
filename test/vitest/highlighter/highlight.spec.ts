@@ -1,9 +1,9 @@
-import { all } from "@wooorm/starry-night";
 import { createHighlighter } from "impasto";
+import common from "impasto/lang/common";
 import { expect, it } from "vitest";
 
 it("highlights code", async () => {
-  const highlighter = await createHighlighter(all);
+  const highlighter = await createHighlighter(common);
   const tree = highlighter.highlight("1", "source.js");
 
   expect(tree).toMatchObject({
@@ -20,7 +20,7 @@ it("highlights code", async () => {
 });
 
 it("supports undefined flags", async () => {
-  const highlighter = await createHighlighter(all);
+  const highlighter = await createHighlighter(common);
   const tree = highlighter.highlight("a", undefined);
 
   expect(tree).toMatchObject({

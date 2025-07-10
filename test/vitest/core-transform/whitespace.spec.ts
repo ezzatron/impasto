@@ -1,6 +1,6 @@
-import { common } from "@wooorm/starry-night";
 import type { Root } from "hast";
 import { coreTransform, createHighlighter } from "impasto";
+import common from "impasto/lang/common";
 import { expect, it } from "vitest";
 
 it("trims trailing whitespace from lines", async () => {
