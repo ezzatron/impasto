@@ -10,6 +10,10 @@ Versioning].
 
 ## Unreleased
 
+## [v0.1.0] - 2025-07-10
+
+[v0.1.0]: https://github.com/ezzatron/impasto/releases/tag/v0.1.0
+
 ### Added
 
 - Initial release.
