@@ -101,7 +101,7 @@ it("loads code", async () => {
 });
 
 it("supports the strip annotation mode", async () => {
-  const outputPath = resolve(outputDirPath, "loads-code");
+  const outputPath = resolve(outputDirPath, "strip-annotation-mode");
 
   const compiler = webpack({
     context: import.meta.dirname,
@@ -186,7 +186,7 @@ it("supports the strip annotation mode", async () => {
 });
 
 it("supports the retain annotation mode", async () => {
-  const outputPath = resolve(outputDirPath, "loads-code");
+  const outputPath = resolve(outputDirPath, "retain-annotation-mode");
 
   const compiler = webpack({
     context: import.meta.dirname,
@@ -284,7 +284,7 @@ it("supports the retain annotation mode", async () => {
 });
 
 it("supports the ignore annotation mode", async () => {
-  const outputPath = resolve(outputDirPath, "loads-code");
+  const outputPath = resolve(outputDirPath, "ignore-annotation-mode");
 
   const compiler = webpack({
     context: import.meta.dirname,
@@ -379,7 +379,7 @@ it("supports the ignore annotation mode", async () => {
 });
 
 it("throws for unknown annotation modes", async () => {
-  const outputPath = resolve(outputDirPath, "loads-code");
+  const outputPath = resolve(outputDirPath, "unknown-annotation-mode");
 
   const compiler = webpack({
     context: import.meta.dirname,
