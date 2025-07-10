@@ -1,5 +1,5 @@
 import type { Element, ElementContent, Root } from "hast";
-import { coreTransform, createHighlighter } from "impasto";
+import { createCoreTransform, createHighlighter } from "impasto";
 import common from "impasto/lang/common";
 import { expect, it } from "vitest";
 
@@ -22,6 +22,7 @@ a {/* [!name-b value b] extra content */}
 `,
     "source.js",
   );
+  const coreTransform = createCoreTransform();
   coreTransform(tree);
 
   expect(tree).toMatchObject({
@@ -256,6 +257,7 @@ it("doesn't strip surrounding nodes that are similar to JSX annotations", () => 
       },
     ],
   };
+  const coreTransform = createCoreTransform();
   coreTransform(tree);
 
   expect(tree).toMatchObject({

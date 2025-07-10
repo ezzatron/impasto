@@ -53,6 +53,30 @@ export interface Annotation {
 }
 
 /**
+ * Configuration options for the core transform.
+ */
+export interface CoreTransformOptions {
+  /**
+   * How to handle annotations.
+   *
+   * @see {@link AnnotationMode}
+   * @defaultValue `"strip"`
+   */
+  annotationMode?: AnnotationMode;
+}
+
+/**
+ * How to handle annotations.
+ *
+ * - In `strip` mode, annotations will be parsed and stripped from the code.
+ * - In `retain` mode, annotations will be parsed, but not stripped.
+ * - In `ignore` mode, annotations will not be parsed or stripped.
+ *
+ * @defaultValue `"strip"`
+ */
+export type AnnotationMode = "strip" | "retain" | "ignore";
+
+/**
  * The result of the core transform.
  */
 export interface CoreTransformResult {
@@ -63,7 +87,7 @@ export interface CoreTransformResult {
 }
 
 /**
- * The core transform.
+ * Create a core transform.
  *
  * **Caution:** This transform mutates the input AST.
  *
@@ -80,34 +104,40 @@ export interface CoreTransformResult {
  * - Whitespace wrapping — Spaces are wrapped with `<span class="imp-s">`, and
  *   tabs are wrapped with `<span class="imp-t">`
  */
-export const coreTransform: Transform<CoreTransformResult> = (tree) => {
-  const lines = splitLines(tree);
+export function createCoreTransform({
+  annotationMode = "strip",
+}: CoreTransformOptions = {}): Transform<CoreTransformResult> {
+  return (tree) => {
+    const lines = splitLines(tree);
 
-  const annotations: Record<string, Annotation[]> = {};
-  const annotationComments: Map<Text, AnnotationComment> = new Map();
-  parseAnnotations(annotations, annotationComments, lines);
+    const annotations: Record<string, Annotation[]> = {};
+    const annotationComments: Map<Text, AnnotationComment> = new Map();
+    if (annotationMode !== "ignore") {
+      parseAnnotations(annotations, annotationComments, lines);
+    }
 
-  cleanupLines(lines, annotationComments);
-  wrapWhitespace(lines);
+    cleanupLines(annotationMode, lines, annotationComments);
+    wrapWhitespace(lines);
 
-  tree.children = [
-    {
-      type: "element",
-      tagName: "pre",
-      properties: { className: [codeBlock] },
-      children: [
-        {
-          type: "element",
-          tagName: "code",
-          properties: {},
-          children: lines,
-        },
-      ],
-    },
-  ];
+    tree.children = [
+      {
+        type: "element",
+        tagName: "pre",
+        properties: { className: [codeBlock] },
+        children: [
+          {
+            type: "element",
+            tagName: "code",
+            properties: {},
+            children: lines,
+          },
+        ],
+      },
+    ];
 
-  return { annotations };
-};
+    return { annotations };
+  };
+}
 
 function splitLines(tree: Root): Element[] {
   const lines: Element[] = [];
@@ -153,6 +183,7 @@ function splitLines(tree: Root): Element[] {
 }
 
 function cleanupLines(
+  annotationMode: AnnotationMode,
   lines: Element[],
   annotationComments: Map<Text, AnnotationComment>,
 ): void {
@@ -163,37 +194,41 @@ function cleanupLines(
     const line = lines[i];
 
     // strip annotations
-    let wasCommentRemoved = false;
+    if (annotationMode === "strip") {
+      let wasCommentRemoved = false;
 
-    for (let j = line.children.length - 1; j >= 0; --j) {
-      const text = getCommentText(line.children[j]);
-      if (!text) continue;
+      for (let j = line.children.length - 1; j >= 0; --j) {
+        const text = getCommentText(line.children[j]);
+        if (!text) continue;
 
-      // skip non-annotation comments
-      const comment = annotationComments.get(text);
-      if (!comment) continue;
+        // skip non-annotation comments
+        const comment = annotationComments.get(text);
+        if (!comment) continue;
 
-      const { start, end = "" } = comment;
-      const content = comment.content.replaceAll(annotationPattern, " ").trim();
+        const { start, end = "" } = comment;
+        const content = comment.content
+          .replaceAll(annotationPattern, " ")
+          .trim();
 
-      if (content) {
-        // comment still has content after stripping annotations
-        text.value = `${start}${content}${end}`;
-      } else {
-        wasCommentRemoved = true;
-
-        if (isJSXComment(line.children[j - 1], line.children[j + 1])) {
-          line.children.splice(j - 1, 3);
-          j -= 2; // account for the two additional elements that were removed
+        if (content) {
+          // comment still has content after stripping annotations
+          text.value = `${start}${content}${end}`;
         } else {
-          line.children.splice(j, 1);
+          wasCommentRemoved = true;
+
+          if (isJSXComment(line.children[j - 1], line.children[j + 1])) {
+            line.children.splice(j - 1, 3);
+            j -= 2; // account for the two additional elements that were removed
+          } else {
+            line.children.splice(j, 1);
+          }
         }
       }
-    }
 
-    if (wasCommentRemoved && isEmptyLine(line)) {
-      lines.splice(i, 1);
-      continue;
+      if (wasCommentRemoved && isEmptyLine(line)) {
+        lines.splice(i, 1);
+        continue;
+      }
     }
 
     // strip trailing whitespace from children in reverse order
@@ -320,7 +355,6 @@ function parseAnnotations(
 ): void {
   for (let i = 0; i < lines.length; ++i) {
     const line = lines[i];
-    annotations[i] = [];
 
     for (let j = 0; j < line.children.length; ++j) {
       const text = getCommentText(line.children[j]);
@@ -336,6 +370,7 @@ function parseAnnotations(
       const [, start, content, end] = commentMatch;
       annotationComments.set(text, { start, content, end });
 
+      annotations[i] = [];
       for (const [, name, value] of annotationMatches) {
         annotations[i].push({ name, value });
       }

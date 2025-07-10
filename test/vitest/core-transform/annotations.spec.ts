@@ -1,5 +1,5 @@
 import type { ElementContent, Root } from "hast";
-import { coreTransform, createHighlighter } from "impasto";
+import { createCoreTransform, createHighlighter } from "impasto";
 import common from "impasto/lang/common";
 import { expect, it } from "vitest";
 
@@ -20,6 +20,7 @@ it("parses annotations", async () => {
 `,
     "source.js",
   );
+  const coreTransform = createCoreTransform();
   const { annotations } = coreTransform(tree);
 
   expect(annotations).toMatchObject({
@@ -41,6 +42,7 @@ it("strips annotations", async () => {
 `,
     "source.js",
   );
+  const coreTransform = createCoreTransform();
   coreTransform(tree);
 
   expect(tree).toMatchObject({
@@ -111,6 +113,104 @@ it("strips annotations", async () => {
   });
 });
 
+it("doesn't strip annotations in retain mode", async () => {
+  const highlighter = await createHighlighter(common);
+  const tree = highlighter.highlight("// [!name value]", "source.js");
+  const coreTransform = createCoreTransform({ annotationMode: "retain" });
+  const { annotations } = coreTransform(tree);
+
+  expect(annotations).toEqual({
+    0: [{ name: "name", value: "value" }],
+  });
+  expect(tree).toMatchObject({
+    type: "root",
+    children: [
+      {
+        type: "element",
+        tagName: "pre",
+        properties: { className: ["imp-cb"] },
+        children: [
+          {
+            type: "element",
+            tagName: "code",
+            properties: {},
+            children: [
+              {
+                type: "element",
+                tagName: "div",
+                properties: { className: ["imp-l"] },
+                children: [
+                  {
+                    type: "element",
+                    tagName: "span",
+                    properties: { className: ["pl-c"] },
+                    children: [
+                      { type: "text", value: "//" },
+                      space,
+                      { type: "text", value: "[!name" },
+                      space,
+                      { type: "text", value: "value]" },
+                    ],
+                  },
+                  { type: "text", value: "\n" },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  });
+});
+
+it("doesn't parse or strip annotations in ignore mode", async () => {
+  const highlighter = await createHighlighter(common);
+  const tree = highlighter.highlight("// [!name value]", "source.js");
+  const coreTransform = createCoreTransform({ annotationMode: "ignore" });
+  const { annotations } = coreTransform(tree);
+
+  expect(annotations).toEqual({});
+  expect(tree).toMatchObject({
+    type: "root",
+    children: [
+      {
+        type: "element",
+        tagName: "pre",
+        properties: { className: ["imp-cb"] },
+        children: [
+          {
+            type: "element",
+            tagName: "code",
+            properties: {},
+            children: [
+              {
+                type: "element",
+                tagName: "div",
+                properties: { className: ["imp-l"] },
+                children: [
+                  {
+                    type: "element",
+                    tagName: "span",
+                    properties: { className: ["pl-c"] },
+                    children: [
+                      { type: "text", value: "//" },
+                      space,
+                      { type: "text", value: "[!name" },
+                      space,
+                      { type: "text", value: "value]" },
+                    ],
+                  },
+                  { type: "text", value: "\n" },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  });
+});
+
 it("ignores unknown comment syntaxes", () => {
   const tree: Root = {
     type: "root",
@@ -123,6 +223,7 @@ it("ignores unknown comment syntaxes", () => {
       },
     ],
   };
+  const coreTransform = createCoreTransform();
   coreTransform(tree);
 
   expect(tree).toMatchObject({
@@ -179,7 +280,8 @@ it("ignores unknown comment syntaxes", () => {
 it("handles source with no annotations", async () => {
   const highlighter = await createHighlighter(common);
   const tree = highlighter.highlight("1", "source.js");
+  const coreTransform = createCoreTransform();
   const { annotations } = coreTransform(tree);
 
-  expect(annotations).toMatchObject({});
+  expect(annotations).toEqual({});
 });

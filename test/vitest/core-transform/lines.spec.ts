@@ -1,11 +1,12 @@
 import type { Root } from "hast";
-import { coreTransform, createHighlighter } from "impasto";
+import { createCoreTransform, createHighlighter } from "impasto";
 import common from "impasto/lang/common";
 import { expect, it } from "vitest";
 
 it("splits lines terminated with newlines", async () => {
   const highlighter = await createHighlighter(common);
   const tree = highlighter.highlight("1\n2\n", "source.js");
+  const coreTransform = createCoreTransform();
   coreTransform(tree);
 
   expect(tree).toMatchObject({
@@ -60,6 +61,7 @@ it("splits lines terminated with newlines", async () => {
 it("handles missing terminal newlines", async () => {
   const highlighter = await createHighlighter(common);
   const tree = highlighter.highlight("1\n2", "source.js");
+  const coreTransform = createCoreTransform();
   coreTransform(tree);
 
   expect(tree).toMatchObject({
@@ -124,6 +126,7 @@ b
 `,
     undefined,
   );
+  const coreTransform = createCoreTransform();
   coreTransform(tree);
 
   expect(tree).toMatchObject({
@@ -180,6 +183,7 @@ it("ignores unexpected node types", () => {
       { type: "comment", value: "b" },
     ],
   };
+  const coreTransform = createCoreTransform();
   coreTransform(tree);
 
   expect(tree).toMatchObject({

@@ -1,5 +1,5 @@
 import type { Root } from "hast";
-import { coreTransform, createHighlighter } from "impasto";
+import { createCoreTransform, createHighlighter } from "impasto";
 import common from "impasto/lang/common";
 import { expect, it } from "vitest";
 
@@ -17,6 +17,7 @@ it("trims trailing whitespace from lines", async () => {
       { type: "text", value: "\n" },
     ],
   };
+  const coreTransform = createCoreTransform();
   coreTransform(tree);
 
   expect(tree).toMatchObject({
@@ -79,6 +80,7 @@ it("trims trailing whitespace from lines", async () => {
 it("wraps spaces", async () => {
   const highlighter = await createHighlighter(common);
   const tree = highlighter.highlight("  a  b", undefined);
+  const coreTransform = createCoreTransform();
   coreTransform(tree);
 
   expect(tree).toMatchObject({
@@ -139,6 +141,7 @@ it("wraps spaces", async () => {
 it("wraps tabs", async () => {
   const highlighter = await createHighlighter(common);
   const tree = highlighter.highlight("\t\ta\t\tb", undefined);
+  const coreTransform = createCoreTransform();
   coreTransform(tree);
 
   expect(tree).toMatchObject({
@@ -199,6 +202,7 @@ it("wraps tabs", async () => {
 it("wraps whitespace in code", async () => {
   const highlighter = await createHighlighter(common);
   const tree = highlighter.highlight('" \t1"', "source.js");
+  const coreTransform = createCoreTransform();
   coreTransform(tree);
 
   expect(tree).toMatchObject({
