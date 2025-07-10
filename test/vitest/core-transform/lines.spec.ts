@@ -6,9 +6,9 @@ import { expect, it } from "vitest";
 it("splits lines terminated with newlines", async () => {
   const highlighter = await createHighlighter(common);
   const tree = highlighter.highlight("1\n2\n", "source.js");
-  const transformed = coreTransform(tree);
+  coreTransform(tree);
 
-  expect(transformed).toMatchObject({
+  expect(tree).toMatchObject({
     type: "root",
     children: [
       {
@@ -60,9 +60,9 @@ it("splits lines terminated with newlines", async () => {
 it("handles missing terminal newlines", async () => {
   const highlighter = await createHighlighter(common);
   const tree = highlighter.highlight("1\n2", "source.js");
-  const transformed = coreTransform(tree);
+  coreTransform(tree);
 
-  expect(transformed).toMatchObject({
+  expect(tree).toMatchObject({
     type: "root",
     children: [
       {
@@ -124,9 +124,9 @@ b
 `,
     undefined,
   );
-  const transformed = coreTransform(tree);
+  coreTransform(tree);
 
-  expect(transformed).toMatchObject({
+  expect(tree).toMatchObject({
     type: "root",
     children: [
       {
@@ -180,9 +180,9 @@ it("ignores unexpected node types", () => {
       { type: "comment", value: "b" },
     ],
   };
-  const transformed = coreTransform(tree);
+  coreTransform(tree);
 
-  expect(transformed).toMatchObject({
+  expect(tree).toMatchObject({
     type: "root",
     children: [
       {

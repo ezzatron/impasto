@@ -13,34 +13,41 @@ const whitespaceClassMap: Record<string, string> = {
 /**
  * The core transform.
  *
+ * **Caution:** This transform mutates the input AST.
+ *
+ * This transform is intended to be used as a common pre-processing step. Other,
+ * more configurable transforms can be applied afterward, where they can
+ * leverage the consistent output from this transform.
+ *
  * This transform handles:
- * - Line splitting
+ * - Line splitting — Each line's content is wrapped with `<div class="imp-l">`
  * - Trimming/collapsing empty lines
  * - Trimming trailing whitespace from lines
  * - TODO: Annotation parsing
  * - TODO: Sections
- * - Whitespace wrapping
+ * - Whitespace wrapping — Spaces are wrapped with `<span class="imp-s">`, and
+ *   tabs are wrapped with `<span class="imp-t">`
  */
-export const coreTransform: Transform<Root> = (tree) => {
+export const coreTransform: Transform = (tree) => {
   const lines = splitLines(tree);
   cleanupLines(lines);
   wrapWhitespace(lines);
 
-  const pre: Element = {
-    type: "element",
-    tagName: "pre",
-    properties: { className: [codeBlock] },
-    children: [
-      {
-        type: "element",
-        tagName: "code",
-        properties: {},
-        children: lines,
-      },
-    ],
-  };
-
-  return { type: "root", children: [pre] };
+  tree.children = [
+    {
+      type: "element",
+      tagName: "pre",
+      properties: { className: [codeBlock] },
+      children: [
+        {
+          type: "element",
+          tagName: "code",
+          properties: {},
+          children: lines,
+        },
+      ],
+    },
+  ];
 };
 
 function splitLines(tree: Root): Element[] {

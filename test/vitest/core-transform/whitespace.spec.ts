@@ -17,9 +17,9 @@ it("trims trailing whitespace from lines", async () => {
       { type: "text", value: "\n" },
     ],
   };
-  const transformed = coreTransform(tree);
+  coreTransform(tree);
 
-  expect(transformed).toMatchObject({
+  expect(tree).toMatchObject({
     type: "root",
     children: [
       {
@@ -79,9 +79,9 @@ it("trims trailing whitespace from lines", async () => {
 it("wraps spaces", async () => {
   const highlighter = await createHighlighter(common);
   const tree = highlighter.highlight("  a  b", undefined);
-  const transformed = coreTransform(tree);
+  coreTransform(tree);
 
-  expect(transformed).toMatchObject({
+  expect(tree).toMatchObject({
     type: "root",
     children: [
       {
@@ -139,9 +139,9 @@ it("wraps spaces", async () => {
 it("wraps tabs", async () => {
   const highlighter = await createHighlighter(common);
   const tree = highlighter.highlight("\t\ta\t\tb", undefined);
-  const transformed = coreTransform(tree);
+  coreTransform(tree);
 
-  expect(transformed).toMatchObject({
+  expect(tree).toMatchObject({
     type: "root",
     children: [
       {
@@ -199,9 +199,9 @@ it("wraps tabs", async () => {
 it("wraps whitespace in code", async () => {
   const highlighter = await createHighlighter(common);
   const tree = highlighter.highlight('" \t1"', "source.js");
-  const transformed = coreTransform(tree);
+  coreTransform(tree);
 
-  expect(transformed).toMatchObject({
+  expect(tree).toMatchObject({
     type: "root",
     children: [
       {
