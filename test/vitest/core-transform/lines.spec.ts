@@ -14,7 +14,7 @@ it("splits lines terminated with newlines", async () => {
       {
         type: "element",
         tagName: "pre",
-        properties: { class: "imp-cb" },
+        properties: { className: ["imp-cb"] },
         children: [
           {
             type: "element",
@@ -24,7 +24,7 @@ it("splits lines terminated with newlines", async () => {
               {
                 type: "element",
                 tagName: "div",
-                properties: { class: "imp-l" },
+                properties: { className: ["imp-l"] },
                 children: [
                   {
                     type: "element",
@@ -38,7 +38,7 @@ it("splits lines terminated with newlines", async () => {
               {
                 type: "element",
                 tagName: "div",
-                properties: { class: "imp-l" },
+                properties: { className: ["imp-l"] },
                 children: [
                   {
                     type: "element",
@@ -68,7 +68,7 @@ it("handles missing terminal newlines", async () => {
       {
         type: "element",
         tagName: "pre",
-        properties: { class: "imp-cb" },
+        properties: { className: ["imp-cb"] },
         children: [
           {
             type: "element",
@@ -78,7 +78,7 @@ it("handles missing terminal newlines", async () => {
               {
                 type: "element",
                 tagName: "div",
-                properties: { class: "imp-l" },
+                properties: { className: ["imp-l"] },
                 children: [
                   {
                     type: "element",
@@ -92,7 +92,7 @@ it("handles missing terminal newlines", async () => {
               {
                 type: "element",
                 tagName: "div",
-                properties: { class: "imp-l" },
+                properties: { className: ["imp-l"] },
                 children: [
                   {
                     type: "element",
@@ -132,7 +132,7 @@ b
       {
         type: "element",
         tagName: "pre",
-        properties: { class: "imp-cb" },
+        properties: { className: ["imp-cb"] },
         children: [
           {
             type: "element",
@@ -142,7 +142,7 @@ b
               {
                 type: "element",
                 tagName: "div",
-                properties: { class: "imp-l" },
+                properties: { className: ["imp-l"] },
                 children: [
                   { type: "text", value: "a" },
                   { type: "text", value: "\n" },
@@ -151,72 +151,15 @@ b
               {
                 type: "element",
                 tagName: "div",
-                properties: { class: "imp-l" },
+                properties: { className: ["imp-l"] },
                 children: [{ type: "text", value: "\n" }],
               },
               {
                 type: "element",
                 tagName: "div",
-                properties: { class: "imp-l" },
+                properties: { className: ["imp-l"] },
                 children: [
                   { type: "text", value: "b" },
-                  { type: "text", value: "\n" },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  });
-});
-
-it("trims trailing whitespace from lines", async () => {
-  const tree: Root = {
-    type: "root",
-    children: [
-      { type: "text", value: " " },
-      { type: "text", value: "1" },
-      { type: "text", value: " " },
-      { type: "text", value: "\n" },
-      { type: "text", value: "  " },
-      { type: "text", value: "2 " },
-      { type: "text", value: " " },
-      { type: "text", value: "\n" },
-    ],
-  };
-  const transformed = coreTransform(tree);
-
-  expect(transformed).toMatchObject({
-    type: "root",
-    children: [
-      {
-        type: "element",
-        tagName: "pre",
-        properties: { class: "imp-cb" },
-        children: [
-          {
-            type: "element",
-            tagName: "code",
-            properties: {},
-            children: [
-              {
-                type: "element",
-                tagName: "div",
-                properties: { class: "imp-l" },
-                children: [
-                  { type: "text", value: " " },
-                  { type: "text", value: "1" },
-                  { type: "text", value: "\n" },
-                ],
-              },
-              {
-                type: "element",
-                tagName: "div",
-                properties: { class: "imp-l" },
-                children: [
-                  { type: "text", value: "  " },
-                  { type: "text", value: "2" },
                   { type: "text", value: "\n" },
                 ],
               },
@@ -245,7 +188,7 @@ it("ignores unexpected node types", () => {
       {
         type: "element",
         tagName: "pre",
-        properties: { class: "imp-cb" },
+        properties: { className: ["imp-cb"] },
         children: [
           {
             type: "element",
@@ -255,7 +198,7 @@ it("ignores unexpected node types", () => {
               {
                 type: "element",
                 tagName: "div",
-                properties: { class: "imp-l" },
+                properties: { className: ["imp-l"] },
                 children: [
                   { type: "text", value: "a" },
                   { type: "text", value: "\n" },

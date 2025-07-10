@@ -35,7 +35,8 @@
   },
   "dependencies": {
     "@types/hast": "^3.0.4",
-    "@wooorm/starry-night": "^3.8.0"
+    "@wooorm/starry-night": "^3.8.0",
+    "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.0",

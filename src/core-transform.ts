@@ -1,6 +1,14 @@
-import type { Element, Root } from "hast";
-import { codeBlock, line } from "./css-class.js";
+import type { Element, ElementContent, Root } from "hast";
+import { visit } from "unist-util-visit";
+import { codeBlock, line, space, tab } from "./css-class.js";
 import type { Transform } from "./transform.js";
+
+const whitespacePattern = /[ \t]/g;
+
+const whitespaceClassMap: Record<string, string> = {
+  " ": space,
+  "\t": tab,
+};
 
 /**
  * The core transform.
@@ -11,16 +19,17 @@ import type { Transform } from "./transform.js";
  * - Trimming trailing whitespace from lines
  * - TODO: Annotation parsing
  * - TODO: Sections
- * - TODO: Whitespace wrapping
+ * - Whitespace wrapping
  */
 export const coreTransform: Transform<Root> = (tree) => {
   const lines = splitLines(tree);
   cleanupLines(lines);
+  wrapWhitespace(lines);
 
   const pre: Element = {
     type: "element",
     tagName: "pre",
-    properties: { class: codeBlock },
+    properties: { className: [codeBlock] },
     children: [
       {
         type: "element",
@@ -125,11 +134,64 @@ function cleanupLines(lines: Element[]): void {
   }
 }
 
+function wrapWhitespace(lines: Element[]): void {
+  visit(
+    { type: "root", children: lines },
+    "text",
+    (node, index, parent) => {
+      /* v8 ignore start */
+      if (!parent || index == null) {
+        throw new Error("Invariant violation: missing parent or index");
+      }
+      /* v8 ignore stop */
+
+      const whitespace: string[] = [];
+      const nonWhitespace: string[] = [];
+
+      whitespacePattern.lastIndex = 0;
+      let match = whitespacePattern.exec(node.value);
+      let lastIndex = 0;
+
+      while (match) {
+        whitespace.push(match[0]);
+        nonWhitespace.push(node.value.slice(lastIndex, match.index));
+        lastIndex = whitespacePattern.lastIndex;
+        match = whitespacePattern.exec(node.value);
+      }
+
+      nonWhitespace.push(node.value.slice(lastIndex));
+
+      const replacement: ElementContent[] = [];
+      let i = 0;
+
+      for (; i < whitespace.length; ++i) {
+        if (nonWhitespace[i]) {
+          replacement.push({ type: "text", value: nonWhitespace[i] });
+        }
+
+        replacement.push({
+          type: "element",
+          tagName: "span",
+          properties: { className: [whitespaceClassMap[whitespace[i]]] },
+          children: [{ type: "text", value: whitespace[i] }],
+        });
+      }
+
+      if (nonWhitespace[i]) {
+        replacement.push({ type: "text", value: nonWhitespace[i] });
+      }
+
+      parent.children.splice(index, 1, ...replacement);
+    },
+    true,
+  );
+}
+
 function emptyLine(): Element {
   return {
     type: "element",
     tagName: "div",
-    properties: { class: line },
+    properties: { className: [line] },
     children: [],
   };
 }
