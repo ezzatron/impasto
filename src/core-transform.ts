@@ -106,7 +106,7 @@ export interface CoreTransformResult {
  * - Trimming/collapsing empty lines
  * - Trimming trailing whitespace from lines
  * - Annotation parsing
- * - TODO: Sections
+ * - Section parsing
  * - Whitespace wrapping — Spaces are wrapped with `<span class="imp-s">`, and
  *   tabs are wrapped with `<span class="imp-t">`
  */
