@@ -20,7 +20,7 @@ it("trims trailing whitespace from lines", async () => {
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
-  expect(tree).toMatchObject({
+  expect(tree).toEqual({
     type: "root",
     children: [
       {
@@ -83,7 +83,7 @@ it("wraps spaces", async () => {
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
-  expect(tree).toMatchObject({
+  expect(tree).toEqual({
     type: "root",
     children: [
       {
@@ -144,7 +144,7 @@ it("wraps tabs", async () => {
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
-  expect(tree).toMatchObject({
+  expect(tree).toEqual({
     type: "root",
     children: [
       {
@@ -205,7 +205,7 @@ it("wraps whitespace in code", async () => {
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
-  expect(tree).toMatchObject({
+  expect(tree).toEqual({
     type: "root",
     children: [
       {

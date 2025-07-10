@@ -6,7 +6,7 @@ it("highlights code", async () => {
   const highlighter = await createHighlighter(common);
   const tree = highlighter.highlight("1", "source.js");
 
-  expect(tree).toMatchObject({
+  expect(tree).toEqual({
     type: "root",
     children: [
       {
@@ -23,7 +23,7 @@ it("supports undefined flags", async () => {
   const highlighter = await createHighlighter(common);
   const tree = highlighter.highlight("a", undefined);
 
-  expect(tree).toMatchObject({
+  expect(tree).toEqual({
     type: "root",
     children: [{ type: "text", value: "a" }],
   });

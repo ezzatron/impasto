@@ -9,7 +9,7 @@ it("splits lines terminated with newlines", async () => {
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
-  expect(tree).toMatchObject({
+  expect(tree).toEqual({
     type: "root",
     children: [
       {
@@ -64,7 +64,7 @@ it("handles missing terminal newlines", async () => {
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
-  expect(tree).toMatchObject({
+  expect(tree).toEqual({
     type: "root",
     children: [
       {
@@ -129,7 +129,7 @@ b
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
-  expect(tree).toMatchObject({
+  expect(tree).toEqual({
     type: "root",
     children: [
       {
@@ -186,7 +186,7 @@ it("ignores unexpected node types", () => {
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
-  expect(tree).toMatchObject({
+  expect(tree).toEqual({
     type: "root",
     children: [
       {

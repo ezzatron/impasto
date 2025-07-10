@@ -25,7 +25,7 @@ a {/* [!name-b value b] extra content */}
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
-  expect(tree).toMatchObject({
+  expect(tree).toEqual({
     type: "root",
     children: [
       {
@@ -260,7 +260,7 @@ it("doesn't strip surrounding nodes that are similar to JSX annotations", () => 
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
-  expect(tree).toMatchObject({
+  expect(tree).toEqual({
     type: "root",
     children: [
       {
@@ -283,7 +283,7 @@ it("doesn't strip surrounding nodes that are similar to JSX annotations", () => 
                   {
                     type: "element",
                     tagName: "div",
-                    properties: { className: [] },
+                    properties: expect.objectContaining({}),
                     children: [{ type: "text", value: "}" }],
                   },
 
@@ -291,13 +291,13 @@ it("doesn't strip surrounding nodes that are similar to JSX annotations", () => 
                   {
                     type: "element",
                     tagName: "div",
-                    properties: {},
+                    properties: expect.objectContaining({}),
                     children: [],
                   },
                   {
                     type: "element",
                     tagName: "div",
-                    properties: { className: [] },
+                    properties: expect.objectContaining({}),
                     children: [{ type: "text", value: "}" }],
                   },
 
@@ -305,13 +305,13 @@ it("doesn't strip surrounding nodes that are similar to JSX annotations", () => 
                   {
                     type: "element",
                     tagName: "div",
-                    properties: {},
+                    properties: expect.objectContaining({}),
                     children: [{ type: "comment", value: "a" }],
                   },
                   {
                     type: "element",
                     tagName: "div",
-                    properties: { className: [] },
+                    properties: expect.objectContaining({}),
                     children: [{ type: "text", value: "}" }],
                   },
 
@@ -319,13 +319,13 @@ it("doesn't strip surrounding nodes that are similar to JSX annotations", () => 
                   {
                     type: "element",
                     tagName: "div",
-                    properties: {},
+                    properties: expect.objectContaining({}),
                     children: [{ type: "text", value: "a" }],
                   },
                   {
                     type: "element",
                     tagName: "div",
-                    properties: { className: [] },
+                    properties: expect.objectContaining({}),
                     children: [{ type: "text", value: "}" }],
                   },
 
@@ -333,7 +333,7 @@ it("doesn't strip surrounding nodes that are similar to JSX annotations", () => 
                   {
                     type: "element",
                     tagName: "div",
-                    properties: { className: [] },
+                    properties: expect.objectContaining({}),
                     children: [{ type: "text", value: "{" }],
                   },
                   { type: "text", value: "a" },
@@ -342,13 +342,13 @@ it("doesn't strip surrounding nodes that are similar to JSX annotations", () => 
                   {
                     type: "element",
                     tagName: "div",
-                    properties: { className: [] },
+                    properties: expect.objectContaining({}),
                     children: [{ type: "text", value: "{" }],
                   },
                   {
                     type: "element",
                     tagName: "div",
-                    properties: {},
+                    properties: expect.objectContaining({}),
                     children: [],
                   },
 
@@ -356,13 +356,13 @@ it("doesn't strip surrounding nodes that are similar to JSX annotations", () => 
                   {
                     type: "element",
                     tagName: "div",
-                    properties: { className: [] },
+                    properties: expect.objectContaining({}),
                     children: [{ type: "text", value: "{" }],
                   },
                   {
                     type: "element",
                     tagName: "div",
-                    properties: {},
+                    properties: expect.objectContaining({}),
                     children: [{ type: "comment", value: "a" }],
                   },
 
@@ -370,13 +370,13 @@ it("doesn't strip surrounding nodes that are similar to JSX annotations", () => 
                   {
                     type: "element",
                     tagName: "div",
-                    properties: { className: [] },
+                    properties: expect.objectContaining({}),
                     children: [{ type: "text", value: "{" }],
                   },
                   {
                     type: "element",
                     tagName: "div",
-                    properties: {},
+                    properties: expect.objectContaining({}),
                     children: [{ type: "text", value: "a" }],
                   },
 

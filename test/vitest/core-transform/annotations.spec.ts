@@ -23,7 +23,7 @@ it("parses annotations", async () => {
   const coreTransform = createCoreTransform();
   const { annotations } = coreTransform(tree);
 
-  expect(annotations).toMatchObject({
+  expect(annotations).toEqual({
     0: [{ name: "name-a", value: "value a" }],
     3: [
       { name: "name-b", value: "value b" },
@@ -45,7 +45,7 @@ it("strips annotations", async () => {
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
-  expect(tree).toMatchObject({
+  expect(tree).toEqual({
     type: "root",
     children: [
       {
@@ -122,7 +122,7 @@ it("doesn't strip annotations in retain mode", async () => {
   expect(annotations).toEqual({
     0: [{ name: "name", value: "value" }],
   });
-  expect(tree).toMatchObject({
+  expect(tree).toEqual({
     type: "root",
     children: [
       {
@@ -170,7 +170,7 @@ it("doesn't parse or strip annotations in ignore mode", async () => {
   const { annotations } = coreTransform(tree);
 
   expect(annotations).toEqual({});
-  expect(tree).toMatchObject({
+  expect(tree).toEqual({
     type: "root",
     children: [
       {
@@ -226,7 +226,7 @@ it("ignores unknown comment syntaxes", () => {
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
-  expect(tree).toMatchObject({
+  expect(tree).toEqual({
     type: "root",
     children: [
       {

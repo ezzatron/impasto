@@ -1,7 +1,13 @@
 import type { Element, ElementContent, Root, Text } from "hast";
 import createClassList from "hast-util-class-list";
 import { visit } from "unist-util-visit";
-import { codeBlock, line, space, tab } from "./css-class.js";
+import {
+  codeBlock as codeBlockClass,
+  line as lineClass,
+  space as spaceClass,
+  tab as tabClass,
+} from "./css-class.js";
+import { sectionName as sectionNameAttr } from "./data-attribute.js";
 import type { Transform } from "./transform.js";
 
 /**
@@ -33,8 +39,8 @@ const commentPattern =
 const whitespacePattern = /[ \t]/g;
 
 const whitespaceClassMap: Record<string, string> = {
-  " ": space,
-  "\t": tab,
+  " ": spaceClass,
+  "\t": tabClass,
 };
 
 /**
@@ -108,22 +114,31 @@ export function createCoreTransform({
   annotationMode = "strip",
 }: CoreTransformOptions = {}): Transform<CoreTransformResult> {
   return (tree) => {
+    const shouldParse = annotationMode !== "ignore";
     const lines = splitLines(tree);
 
     const annotations: Record<string, Annotation[]> = {};
     const annotationComments: Map<Text, AnnotationComment> = new Map();
-    if (annotationMode !== "ignore") {
+
+    if (shouldParse) {
       parseAnnotations(annotations, annotationComments, lines);
+      addSections(lines, annotations);
     }
 
     cleanupLines(annotationMode, lines, annotationComments);
+
+    if (shouldParse) {
+      trimSectionLines(lines);
+      trimSectionLines(lines.toReversed());
+    }
+
     wrapWhitespace(lines);
 
     tree.children = [
       {
         type: "element",
         tagName: "pre",
-        properties: { className: [codeBlock] },
+        properties: { className: [codeBlockClass] },
         children: [
           {
             type: "element",
@@ -329,7 +344,7 @@ function emptyLine(): Element {
   return {
     type: "element",
     tagName: "div",
-    properties: { className: [line] },
+    properties: { className: [lineClass] },
     children: [],
   };
 }
@@ -411,4 +426,89 @@ function isJSXComment(
     createClassList(prevSibling).contains("pl-pse") &&
     createClassList(nextSibling).contains("pl-pse")
   );
+}
+
+function addSections(
+  lines: Element[],
+  annotations: Record<number, Annotation[]>,
+): void {
+  const seenSections = new Map<string, number>();
+  const openSections = new Map<string, number>();
+
+  for (let i = 0; i < lines.length; ++i) {
+    const line = lines[i];
+    const lineNumber = i + 1;
+    const sections = new Map(openSections);
+
+    for (const { name, value } of annotations[i] ?? []) {
+      const isSingleLine = name === "section";
+      const isStart = name === "section-start";
+      const isEnd = name === "section-end";
+
+      if (!isSingleLine && !isStart && !isEnd) continue;
+
+      if (!value) {
+        throw new Error(
+          `Missing code section name on line ${lineNumber} ` +
+            `in annotation [!${name}]`,
+        );
+      }
+
+      if (!isEnd && seenSections.has(value)) {
+        const seenLineNumber = seenSections.get(value);
+
+        throw new Error(
+          `Code section ${value} on line ${lineNumber} ` +
+            `already seen on line ${seenLineNumber}`,
+        );
+      }
+
+      seenSections.set(value, lineNumber);
+      sections.set(value, lineNumber);
+      if (isStart) openSections.set(value, lineNumber);
+      if (isEnd) openSections.delete(value);
+    }
+
+    if (sections.size < 1) continue;
+
+    line.properties[sectionNameAttr] = Array.from(sections.keys())
+      .sort()
+      .join(" ");
+  }
+
+  if (openSections.size > 0) {
+    const descriptions = Array.from(openSections)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([name, lineNumber]) => `${name} on line ${lineNumber}`);
+
+    throw new Error(`Unclosed code sections: ${descriptions.join(", ")}`);
+  }
+}
+
+function trimSectionLines(lines: Element[]): void {
+  const seenSections = new Set<string>();
+
+  for (let i = 0; i < lines.length; ++i) {
+    const line = lines[i];
+    if (typeof line.properties[sectionNameAttr] !== "string") continue;
+
+    const lineSections = new Set(line.properties[sectionNameAttr].split(" "));
+    const isEmpty = isEmptyLine(line);
+
+    for (const section of lineSections) {
+      if (isEmpty && !seenSections.has(section)) {
+        lineSections.delete(section);
+
+        continue;
+      }
+
+      seenSections.add(section);
+    }
+
+    if (lineSections.size < 1) {
+      delete line.properties[sectionNameAttr];
+    } else {
+      line.properties[sectionNameAttr] = Array.from(lineSections).join(" ");
+    }
+  }
 }
