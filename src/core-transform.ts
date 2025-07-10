@@ -7,12 +7,14 @@ import type { Transform } from "./transform.js";
  *
  * This transform handles:
  * - Line splitting
+ * - Trimming/collapsing empty lines
  * - TODO: Annotation parsing
  * - TODO: Sections
  * - TODO: Whitespace wrapping
  */
 export const coreTransform: Transform<Root> = (tree) => {
-  const lines: Element[] = splitLines(tree);
+  const lines = splitLines(tree);
+  cleanupLines(lines);
 
   const pre: Element = {
     type: "element",
@@ -31,7 +33,7 @@ export const coreTransform: Transform<Root> = (tree) => {
   return { type: "root", children: [pre] };
 };
 
-const splitLines: Transform<Element[]> = (tree) => {
+function splitLines(tree: Root): Element[] {
   const lines: Element[] = [];
   let line: Element = emptyLine();
 
@@ -72,7 +74,27 @@ const splitLines: Transform<Element[]> = (tree) => {
   lines.push(line);
 
   return lines;
-};
+}
+
+function cleanupLines(lines: Element[]): void {
+  let isFollowingEmpty = false;
+
+  for (let i = lines.length - 1; i >= 0; --i) {
+    const line = lines[i];
+
+    // trim/collapse empty lines
+    const isEmpty = isEmptyLine(line);
+
+    if (isEmpty && (isFollowingEmpty || i === 0 || i === lines.length - 1)) {
+      lines.splice(i, 1);
+    }
+
+    isFollowingEmpty = isEmpty;
+  }
+
+  // strip leading empty line
+  if (lines[0] && isEmptyLine(lines[0])) lines.shift();
+}
 
 function emptyLine(): Element {
   return {
@@ -81,4 +103,12 @@ function emptyLine(): Element {
     properties: { class: line },
     children: [],
   };
+}
+
+function isEmptyLine(line: Element): boolean {
+  for (const node of line.children) {
+    if (node.type !== "text" || node.value.trim()) return false;
+  }
+
+  return true;
 }

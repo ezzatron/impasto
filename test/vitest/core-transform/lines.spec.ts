@@ -107,9 +107,19 @@ it("handles missing terminal newlines", async () => {
   });
 });
 
-it("handles text nodes with newlines mid-value", async () => {
+it("handles text nodes with interspersed newlines", async () => {
   const highlighter = await createHighlighter(common);
-  const tree = highlighter.highlight("a\nb", undefined);
+  const tree = highlighter.highlight(
+    `
+
+a
+
+b
+
+
+`,
+    undefined,
+  );
   const transformed = coreTransform(tree);
 
   expect(transformed).toMatchObject({
@@ -130,6 +140,12 @@ it("handles text nodes with newlines mid-value", async () => {
                 tagName: "div",
                 properties: { class: "imp-l" },
                 children: [{ type: "text", value: "a" }],
+              },
+              {
+                type: "element",
+                tagName: "div",
+                properties: { class: "imp-l" },
+                children: [],
               },
               {
                 type: "element",
