@@ -8,6 +8,7 @@ import type { Transform } from "./transform.js";
  * This transform handles:
  * - Line splitting
  * - Trimming/collapsing empty lines
+ * - Trimming trailing whitespace from lines
  * - TODO: Annotation parsing
  * - TODO: Sections
  * - TODO: Whitespace wrapping
@@ -79,8 +80,31 @@ function splitLines(tree: Root): Element[] {
 function cleanupLines(lines: Element[]): void {
   let isFollowingEmpty = false;
 
+  // process lines in reverse order
   for (let i = lines.length - 1; i >= 0; --i) {
     const line = lines[i];
+
+    // strip trailing whitespace from children in reverse order
+    for (let j = line.children.length - 1; j >= 0; --j) {
+      const node = line.children[j];
+
+      // a non-text node means we can't trim any more
+      if (node.type !== "text") break;
+
+      const trimmed = node.value.trimEnd();
+
+      // strip empty text nodes from the end of the line
+      if (!trimmed) {
+        line.children.splice(j, 1);
+        continue;
+      }
+
+      // if the trimmed value is different but not empty, update it
+      if (trimmed !== node.value) node.value = trimmed;
+
+      // value is not empty, so we can stop trimming
+      break;
+    }
 
     // trim/collapse empty lines
     const isEmpty = isEmptyLine(line);
@@ -94,6 +118,11 @@ function cleanupLines(lines: Element[]): void {
 
   // strip leading empty line
   if (lines[0] && isEmptyLine(lines[0])) lines.shift();
+
+  // ensure all remaining lines end with a newline
+  for (let i = lines.length - 1; i >= 0; --i) {
+    lines[i].children.push({ type: "text", value: "\n" });
+  }
 }
 
 function emptyLine(): Element {
