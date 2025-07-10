@@ -49,6 +49,7 @@ export interface LoadedCode {
 const schema: JSONSchema7 = {
   type: "object",
   additionalProperties: false,
+  required: ["grammars"],
   properties: {
     grammars: {
       type: "array",

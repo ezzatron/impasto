@@ -406,6 +406,33 @@ it("throws for unknown annotation modes", async () => {
   );
 });
 
+it("throws if no grammars are provided", async () => {
+  const outputPath = resolve(outputDirPath, "no-grammars");
+
+  const compiler = webpack({
+    context: import.meta.dirname,
+    entry: "./fixture/entry.js",
+    output: {
+      path: outputPath,
+      filename: "bundle.js",
+    },
+    module: {
+      rules: [
+        {
+          test: /\.js$/,
+          use: {
+            loader: resolve(artifactsPath, "dist/loader/index.js"),
+          },
+        },
+      ],
+    },
+  });
+
+  await expect(() => compile(compiler)).rejects.toThrow(
+    "options misses the property 'grammars'",
+  );
+});
+
 async function compile(compiler: Compiler): Promise<LoadedCode> {
   return new Promise((resolve, reject) => {
     compiler.run((error, stats) => {
