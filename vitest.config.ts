@@ -10,7 +10,7 @@ export default defineConfig({
     teardownTimeout: 1000,
     include: ["test/vitest/**/*.spec.ts"],
     coverage: {
-      include: ["src/**/*.ts"],
+      include: ["src/**/*.ts", "artifacts/dist/loader/*.js"],
     },
   },
 });

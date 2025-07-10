@@ -7,12 +7,7 @@ import ts from "typescript-eslint";
 
 export default ts.config(
   {
-    ignores: [
-      ".makefiles",
-      "artifacts",
-      "test/browser-tests.js",
-      "test/browser-utils.js",
-    ],
+    ignores: [".makefiles", "artifacts", "test/vitest/loader/fixture"],
   },
   js.configs.recommended,
   // eslint-disable-next-line import/no-named-as-default-member

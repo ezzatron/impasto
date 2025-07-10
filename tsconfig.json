@@ -8,7 +8,8 @@
     "noEmitOnError": true,
     "paths": {
       "impasto": ["./src/index.ts"],
-      "impasto/lang/*": ["./src/lang/*.ts"]
+      "impasto/lang/*": ["./src/lang/*.ts"],
+      "impasto/loader": ["./src/loader/index.ts"]
     },
     "skipLibCheck": true,
     "sourceMap": true,
