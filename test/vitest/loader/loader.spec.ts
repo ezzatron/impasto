@@ -1,7 +1,7 @@
 import type { ElementContent } from "hast";
 import common from "impasto/lang/common";
 import type { LoadedCode } from "impasto/loader";
-import { relative, resolve } from "node:path";
+import { resolve } from "node:path";
 import { expect, it } from "vitest";
 import { webpack, type Compiler } from "webpack";
 
@@ -39,10 +39,9 @@ it("loads code", async () => {
   });
 
   const result = await compile(compiler);
-  result.filename = relative(import.meta.dirname, result.filename);
 
   expect(result).toEqual({
-    filename: "fixture/entry.js",
+    filename: "./fixture/entry.js",
     scope: "source.js",
     lineNumbers: true,
     tree: {
@@ -124,10 +123,9 @@ it("supports the strip annotation mode", async () => {
   });
 
   const result = await compile(compiler);
-  result.filename = relative(import.meta.dirname, result.filename);
 
   expect(result).toEqual({
-    filename: "fixture/entry.js",
+    filename: "./fixture/entry.js",
     scope: "source.js",
     lineNumbers: true,
     tree: {
@@ -209,10 +207,9 @@ it("supports the retain annotation mode", async () => {
   });
 
   const result = await compile(compiler);
-  result.filename = relative(import.meta.dirname, result.filename);
 
   expect(result).toEqual({
-    filename: "fixture/entry.js",
+    filename: "./fixture/entry.js",
     scope: "source.js",
     lineNumbers: true,
     tree: {
@@ -307,10 +304,9 @@ it("supports the ignore annotation mode", async () => {
   });
 
   const result = await compile(compiler);
-  result.filename = relative(import.meta.dirname, result.filename);
 
   expect(result).toEqual({
-    filename: "fixture/entry.js",
+    filename: "./fixture/entry.js",
     scope: "source.js",
     lineNumbers: true,
     tree: {

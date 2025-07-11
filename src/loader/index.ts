@@ -80,7 +80,7 @@ const codeLoader: LoaderDefinitionFunction<CodeLoaderOptions> = function (
     const result: LoadedCode = {
       tree,
       scope,
-      filename: this.resourcePath,
+      filename: this.utils.contextify(this.rootContext, this.resourcePath),
       lineNumbers: true,
     };
 
