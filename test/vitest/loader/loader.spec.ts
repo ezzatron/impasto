@@ -34,7 +34,7 @@ it("loads code", async () => {
 
   const compiler = webpack({
     context: import.meta.dirname,
-    entry: "./fixture/entry.js",
+    entry: "./fixture/basic/entry.js",
     output: {
       path: outputPath,
       filename: "bundle.js",
@@ -55,7 +55,7 @@ it("loads code", async () => {
   const result = await compile(compiler);
 
   expect(result).toEqual({
-    filename: "./fixture/entry.js",
+    filename: "./fixture/basic/entry.js",
     scope: "source.js",
     lineNumbers: true,
     tree: {
@@ -117,7 +117,7 @@ it("supports the strip annotation mode", async () => {
 
   const compiler = webpack({
     context: import.meta.dirname,
-    entry: "./fixture/entry.js?annotations=strip",
+    entry: "./fixture/basic/entry.js?annotations=strip",
     output: {
       path: outputPath,
       filename: "bundle.js",
@@ -138,7 +138,7 @@ it("supports the strip annotation mode", async () => {
   const result = await compile(compiler);
 
   expect(result).toEqual({
-    filename: "./fixture/entry.js",
+    filename: "./fixture/basic/entry.js",
     scope: "source.js",
     lineNumbers: true,
     tree: {
@@ -200,7 +200,7 @@ it("supports the retain annotation mode", async () => {
 
   const compiler = webpack({
     context: import.meta.dirname,
-    entry: "./fixture/entry.js?annotations=retain",
+    entry: "./fixture/basic/entry.js?annotations=retain",
     output: {
       path: outputPath,
       filename: "bundle.js",
@@ -221,7 +221,7 @@ it("supports the retain annotation mode", async () => {
   const result = await compile(compiler);
 
   expect(result).toEqual({
-    filename: "./fixture/entry.js",
+    filename: "./fixture/basic/entry.js",
     scope: "source.js",
     lineNumbers: true,
     tree: {
@@ -297,7 +297,7 @@ it("supports the ignore annotation mode", async () => {
 
   const compiler = webpack({
     context: import.meta.dirname,
-    entry: "./fixture/entry.js?annotations=ignore",
+    entry: "./fixture/basic/entry.js?annotations=ignore",
     output: {
       path: outputPath,
       filename: "bundle.js",
@@ -318,7 +318,7 @@ it("supports the ignore annotation mode", async () => {
   const result = await compile(compiler);
 
   expect(result).toEqual({
-    filename: "./fixture/entry.js",
+    filename: "./fixture/basic/entry.js",
     scope: "source.js",
     lineNumbers: true,
     tree: {
@@ -391,7 +391,7 @@ it("throws for unknown annotation modes", async () => {
 
   const compiler = webpack({
     context: import.meta.dirname,
-    entry: "./fixture/entry.js?annotations=xxx",
+    entry: "./fixture/basic/entry.js?annotations=xxx",
     output: {
       path: outputPath,
       filename: "bundle.js",
@@ -419,7 +419,7 @@ it("throws if no grammars are provided", async () => {
 
   const compiler = webpack({
     context: import.meta.dirname,
-    entry: "./fixture/entry.js",
+    entry: "./fixture/basic/entry.js",
     output: {
       path: outputPath,
       filename: "bundle.js",

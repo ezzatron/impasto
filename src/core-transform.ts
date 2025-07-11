@@ -101,7 +101,7 @@ export type AnnotationMode = "strip" | "retain" | "ignore";
  */
 export interface RedactEntry {
   /**
-   * The search expressions to find the information to redact.
+   * The regular expressions to use when finding the information to redact.
    *
    * **Note:** All expressions must use the global (`/g`) flag.
    */

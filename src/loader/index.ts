@@ -3,7 +3,11 @@ import type { Root } from "hast";
 import type { JSONSchema7 } from "json-schema";
 import { callbackify } from "node:util";
 import type { LoaderDefinitionFunction } from "webpack";
-import { createCoreTransform, type AnnotationMode } from "../core-transform.js";
+import {
+  createCoreTransform,
+  type AnnotationMode,
+  type RedactEntry as CoreTransformRedactEntry,
+} from "../core-transform.js";
 import { createHighlighter } from "../highlighter.js";
 
 /**
@@ -14,6 +18,34 @@ export interface CodeLoaderOptions {
    * The grammars to use for highlighting code.
    */
   grammars: Grammar[];
+
+  /**
+   * How to redact sensitive information.
+   *
+   * The keys are the types of sensitive information, and the values define
+   * how to find and replace that information.
+   */
+  redact?: Record<string, RedactEntry>;
+}
+
+/**
+ * Defines how to redact a specific type of sensitive information.
+ */
+export interface RedactEntry {
+  /**
+   * The regular expressions to use when finding the information to redact.
+   *
+   * **Note:** All expressions will use the global (`/g`) and case-insensitive
+   * (`/i`) flags.
+   */
+  search: string[];
+
+  /**
+   * The replacement string to use when redacting the information.
+   *
+   * @defaultValue `""`
+   */
+  replace?: string;
 }
 
 /**
@@ -55,6 +87,27 @@ const schema: JSONSchema7 = {
       type: "array",
       items: { type: "object" },
     },
+    redact: {
+      type: "object",
+      additionalProperties: {
+        type: "object",
+        additionalProperties: false,
+        required: ["search", "replace"],
+        properties: {
+          search: {
+            type: "array",
+            minItems: 1,
+            items: {
+              type: "string",
+              minLength: 1,
+            },
+          },
+          replace: {
+            type: "string",
+          },
+        },
+      },
+    },
   },
 } as const;
 
@@ -74,7 +127,21 @@ const codeLoader: LoaderDefinitionFunction<CodeLoaderOptions> = function (
     const highlighter = await createHighlighter(options.grammars);
     const scope = highlighter.flagToScope(this.resourcePath);
     const tree = highlighter.highlight(source, scope);
-    const coreTransform = createCoreTransform({ annotationMode });
+
+    const redact = Object.fromEntries(
+      Object.entries(options.redact ?? {}).map(
+        ([type, { search, replace }]) => {
+          const entry: CoreTransformRedactEntry = {
+            search: search.map((pattern) => new RegExp(pattern, "gi")),
+            replace: () => replace,
+          };
+
+          return [type, entry];
+        },
+      ),
+    );
+
+    const coreTransform = createCoreTransform({ annotationMode, redact });
     coreTransform(tree);
 
     const result: LoadedCode = {
