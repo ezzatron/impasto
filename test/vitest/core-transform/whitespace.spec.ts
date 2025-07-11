@@ -31,7 +31,7 @@ const lineNumbers = (n: number): Element => ({
   children: Array.from({ length: n }, (_, i) => lineNumber(i + 1)),
 });
 
-it("trims trailing whitespace from lines", async () => {
+it("trims trailing whitespace from lines", () => {
   const tree: Root = {
     type: "root",
     children: [
@@ -66,22 +66,13 @@ it("trims trailing whitespace from lines", async () => {
                 type: "element",
                 tagName: "div",
                 properties: { className: ["imp-l"] },
-                children: [
-                  space,
-                  { type: "text", value: "1" },
-                  { type: "text", value: "\n" },
-                ],
+                children: [space, { type: "text", value: "1\n" }],
               },
               {
                 type: "element",
                 tagName: "div",
                 properties: { className: ["imp-l"] },
-                children: [
-                  space,
-                  space,
-                  { type: "text", value: "2" },
-                  { type: "text", value: "\n" },
-                ],
+                children: [space, space, { type: "text", value: "2\n" }],
               },
             ],
           },
@@ -121,8 +112,7 @@ it("wraps spaces", async () => {
                   { type: "text", value: "a" },
                   space,
                   space,
-                  { type: "text", value: "b" },
-                  { type: "text", value: "\n" },
+                  { type: "text", value: "b\n" },
                 ],
               },
             ],
@@ -163,8 +153,7 @@ it("wraps tabs", async () => {
                   { type: "text", value: "a" },
                   tab,
                   tab,
-                  { type: "text", value: "b" },
-                  { type: "text", value: "\n" },
+                  { type: "text", value: "b\n" },
                 ],
               },
             ],

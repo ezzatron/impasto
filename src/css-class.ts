@@ -21,6 +21,11 @@ export const lineNumber = `${base}-n`;
 export const lineNumbers = `${base}-ln`;
 
 /**
+ * The CSS class for redactions.
+ */
+export const redaction = `${base}-rd`;
+
+/**
  * The CSS class for spaces.
  */
 export const space = `${base}-s`;

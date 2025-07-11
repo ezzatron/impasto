@@ -4,6 +4,7 @@ export type {
   AnnotationMode,
   CoreTransformOptions,
   CoreTransformResult,
+  RedactEntry,
 } from "./core-transform.js";
 export * as cssClass from "./css-class.js";
 export * as dataAttribute from "./data-attribute.js";

@@ -6,10 +6,14 @@ import {
   line as lineClass,
   lineNumber as lineNumberClass,
   lineNumbers as lineNumbersClass,
+  redaction as redactionClass,
   space as spaceClass,
   tab as tabClass,
 } from "./css-class.js";
-import { sectionName as sectionNameAttr } from "./data-attribute.js";
+import {
+  redactionType as redactionTypeAttr,
+  sectionName as sectionNameAttr,
+} from "./data-attribute.js";
 import type { Transform } from "./transform.js";
 
 /**
@@ -71,6 +75,14 @@ export interface CoreTransformOptions {
    * @defaultValue `"strip"`
    */
   annotationMode?: AnnotationMode;
+
+  /**
+   * How to redact sensitive information.
+   *
+   * The keys are the types of sensitive information, and the values define
+   * how to find and replace that information.
+   */
+  redact?: Record<string, RedactEntry>;
 }
 
 /**
@@ -83,6 +95,23 @@ export interface CoreTransformOptions {
  * @defaultValue `"strip"`
  */
 export type AnnotationMode = "strip" | "retain" | "ignore";
+
+/**
+ * Defines how to redact a specific type of sensitive information.
+ */
+export interface RedactEntry {
+  /**
+   * The search expressions to find the information to redact.
+   *
+   * **Note:** All expressions must use the global (`/g`) flag.
+   */
+  search: RegExp[];
+
+  /**
+   * How to replace the found information.
+   */
+  replace: (match: RegExpExecArray) => string;
+}
 
 /**
  * The result of the core transform.
@@ -113,9 +142,12 @@ export interface CoreTransformResult {
  * - Section parsing
  * - Whitespace wrapping — Spaces are wrapped with `<span class="imp-s">`, and
  *   tabs are wrapped with `<span class="imp-t">`
+ * - Redaction of sensitive information - Redactions are wrapped with
+ *   `<span class="imp-rd" data-imp-rd="<type>">`
  */
 export function createCoreTransform({
   annotationMode = "strip",
+  redact = {},
 }: CoreTransformOptions = {}): Transform<CoreTransformResult> {
   return (tree) => {
     const shouldParse = annotationMode !== "ignore";
@@ -129,6 +161,8 @@ export function createCoreTransform({
       addSections(lines, annotations);
     }
 
+    collapseTextNodes(lines);
+    applyRedaction(redact, lines);
     cleanupLines(annotationMode, lines, annotationComments);
 
     if (shouldParse) {
@@ -288,7 +322,14 @@ function cleanupLines(
 
   // ensure all remaining lines end with a newline
   for (let i = lines.length - 1; i >= 0; --i) {
-    lines[i].children.push({ type: "text", value: "\n" });
+    const line = lines[i];
+    const lastChild = line.children[line.children.length - 1];
+
+    if (lastChild?.type === "text") {
+      lastChild.value += "\n";
+    } else {
+      line.children.push({ type: "text", value: "\n" });
+    }
   }
 }
 
@@ -536,4 +577,92 @@ function createLineNumbers(count: number): Element {
   }
 
   return numbers;
+}
+
+function collapseTextNodes(lines: Element[]): void {
+  visit(
+    { type: "root", children: lines },
+    "text",
+    (node, index, parent) => {
+      /* v8 ignore start */
+      if (!parent || index == null) {
+        throw new Error("Invariant violation: missing parent or index");
+      }
+      /* v8 ignore stop */
+
+      if (index < 1) return;
+
+      const prevSibling = parent.children[index - 1];
+
+      if (prevSibling.type !== "text") return;
+
+      prevSibling.value += node.value;
+      parent.children.splice(index, 1);
+    },
+    true,
+  );
+}
+
+function applyRedaction(
+  entries: Record<string, RedactEntry>,
+  lines: Element[],
+): void {
+  visit(
+    { type: "root", children: lines },
+    "text",
+    (node, index, parent) => {
+      /* v8 ignore start */
+      if (!parent || index == null) {
+        throw new Error("Invariant violation: missing parent or index");
+      }
+      /* v8 ignore stop */
+
+      for (const [type, entry] of Object.entries(entries)) {
+        const replacements: [match: RegExpExecArray, replacement: string][] =
+          [];
+
+        for (const search of entry.search) {
+          for (const match of node.value.matchAll(search)) {
+            replacements.push([match, entry.replace(match)]);
+          }
+        }
+
+        if (replacements.length < 1) continue;
+
+        const content: ElementContent[] = [];
+        let lastIndex = 0;
+
+        for (const [match, replacement] of replacements) {
+          // add any non-matching text before the match
+          if (match.index > lastIndex) {
+            content.push({
+              type: "text",
+              value: node.value.slice(lastIndex, match.index),
+            });
+          }
+
+          // add the redaction
+          content.push({
+            type: "element",
+            tagName: "span",
+            properties: {
+              className: [redactionClass],
+              [redactionTypeAttr]: type,
+            },
+            children: [{ type: "text", value: replacement }],
+          });
+
+          lastIndex = match.index + match[0].length;
+        }
+
+        // add any remaining text after the last match
+        if (lastIndex < node.value.length) {
+          content.push({ type: "text", value: node.value.slice(lastIndex) });
+        }
+
+        parent.children.splice(index, 1, ...content);
+      }
+    },
+    true,
+  );
 }

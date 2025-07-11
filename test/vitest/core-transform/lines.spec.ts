@@ -209,10 +209,7 @@ b
                 type: "element",
                 tagName: "div",
                 properties: { className: ["imp-l"] },
-                children: [
-                  { type: "text", value: "a" },
-                  { type: "text", value: "\n" },
-                ],
+                children: [{ type: "text", value: "a\n" }],
               },
               {
                 type: "element",
@@ -224,10 +221,7 @@ b
                 type: "element",
                 tagName: "div",
                 properties: { className: ["imp-l"] },
-                children: [
-                  { type: "text", value: "b" },
-                  { type: "text", value: "\n" },
-                ],
+                children: [{ type: "text", value: "b\n" }],
               },
             ],
           },
@@ -279,10 +273,7 @@ it("ignores unexpected node types", () => {
                 type: "element",
                 tagName: "div",
                 properties: { className: ["imp-l"] },
-                children: [
-                  { type: "text", value: "a" },
-                  { type: "text", value: "\n" },
-                ],
+                children: [{ type: "text", value: "a\n" }],
               },
             ],
           },
