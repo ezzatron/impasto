@@ -143,12 +143,12 @@ it("supports redaction", async () => {
   });
 });
 
-it("throws if no grammars are provided", async () => {
-  const outputPath = resolve(outputDirPath, "no-grammars");
+it("supports redaction with no replace value", async () => {
+  const outputPath = resolve(outputDirPath, "redaction");
 
   const compiler = webpack({
     context: import.meta.dirname,
-    entry: "./fixture/basic/entry.js",
+    entry: "./fixture/redaction/entry.js",
     output: {
       path: outputPath,
       filename: "bundle.js",
@@ -159,15 +159,102 @@ it("throws if no grammars are provided", async () => {
           test: /\.js$/,
           use: {
             loader: resolve(artifactsPath, "dist/loader/index.js"),
+            options: {
+              grammars: common,
+              redact: {
+                "api-key": { search: ["key_\\w+"] },
+              },
+            },
           },
         },
       ],
     },
   });
 
-  await expect(() => compile(compiler)).rejects.toThrow(
-    "options misses the property 'grammars'",
-  );
+  const result = await compile(compiler);
+
+  expect(result).toEqual({
+    filename: "./fixture/redaction/entry.js",
+    scope: "source.js",
+    lineNumbers: true,
+    tree: {
+      type: "root",
+      children: [
+        {
+          type: "element",
+          tagName: "pre",
+          properties: { className: ["imp-cb"] },
+          children: [
+            lineNumbers(1),
+            {
+              type: "element",
+              tagName: "code",
+              properties: {},
+              children: [
+                {
+                  type: "element",
+                  tagName: "div",
+                  properties: { className: ["imp-l"] },
+                  children: [
+                    {
+                      children: [{ type: "text", value: "const" }],
+                      properties: { className: ["pl-k"] },
+                      tagName: "span",
+                      type: "element",
+                    },
+                    space,
+                    {
+                      children: [{ type: "text", value: "key" }],
+                      properties: { className: ["pl-c1"] },
+                      tagName: "span",
+                      type: "element",
+                    },
+                    space,
+                    {
+                      children: [{ type: "text", value: "=" }],
+                      properties: { className: ["pl-k"] },
+                      tagName: "span",
+                      type: "element",
+                    },
+                    space,
+                    {
+                      children: [
+                        {
+                          children: [{ type: "text", value: '"' }],
+                          properties: { className: ["pl-pds"] },
+                          tagName: "span",
+                          type: "element",
+                        },
+                        {
+                          type: "element",
+                          tagName: "span",
+                          properties: {
+                            className: ["imp-rd"],
+                            "data-imp-rd": "api-key",
+                          },
+                          children: [],
+                        },
+                        {
+                          children: [{ type: "text", value: '"' }],
+                          properties: { className: ["pl-pds"] },
+                          tagName: "span",
+                          type: "element",
+                        },
+                      ],
+                      properties: { className: ["pl-s"] },
+                      tagName: "span",
+                      type: "element",
+                    },
+                    { type: "text", value: ";\n" },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  });
 });
 
 async function compile(compiler: Compiler): Promise<LoadedCode> {

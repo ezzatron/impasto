@@ -92,7 +92,7 @@ const schema: JSONSchema7 = {
       additionalProperties: {
         type: "object",
         additionalProperties: false,
-        required: ["search", "replace"],
+        required: ["search"],
         properties: {
           search: {
             type: "array",

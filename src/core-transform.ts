@@ -649,7 +649,7 @@ function applyRedaction(
               className: [redactionClass],
               [redactionTypeAttr]: type,
             },
-            children: [{ type: "text", value: replacement }],
+            children: replacement ? [{ type: "text", value: replacement }] : [],
           });
 
           lastIndex = match.index + match[0].length;
