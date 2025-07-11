@@ -10,6 +10,10 @@ Versioning].
 
 ## Unreleased
 
+## [v0.5.0] - 2025-07-11
+
+[v0.5.0]: https://github.com/ezzatron/impasto/releases/tag/v0.5.0
+
 ### Added
 
 - Added redaction support to the loader.
