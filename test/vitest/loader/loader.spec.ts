@@ -1,4 +1,4 @@
-import type { ElementContent } from "hast";
+import type { Element } from "hast";
 import common from "impasto/lang/common";
 import type { LoadedCode } from "impasto/loader";
 import { resolve } from "node:path";
@@ -8,12 +8,26 @@ import { webpack, type Compiler } from "webpack";
 const artifactsPath = resolve(import.meta.dirname, "../../../artifacts");
 const outputDirPath = resolve(artifactsPath, "loader/output");
 
-const space: ElementContent = {
+const space: Element = {
   type: "element",
   tagName: "span",
   properties: { className: ["imp-s"] },
   children: [{ type: "text", value: " " }],
 };
+
+const lineNumber = (n: number): Element => ({
+  type: "element",
+  tagName: "div",
+  properties: { className: ["imp-n"] },
+  children: [{ type: "text", value: String(n) }],
+});
+
+const lineNumbers = (n: number): Element => ({
+  type: "element",
+  tagName: "div",
+  properties: { className: ["imp-ln"] },
+  children: Array.from({ length: n }, (_, i) => lineNumber(i + 1)),
+});
 
 it("loads code", async () => {
   const outputPath = resolve(outputDirPath, "loads-code");
@@ -52,6 +66,7 @@ it("loads code", async () => {
           tagName: "pre",
           properties: { className: ["imp-cb"] },
           children: [
+            lineNumbers(2),
             {
               type: "element",
               tagName: "code",
@@ -136,6 +151,7 @@ it("supports the strip annotation mode", async () => {
           tagName: "pre",
           properties: { className: ["imp-cb"] },
           children: [
+            lineNumbers(2),
             {
               type: "element",
               tagName: "code",
@@ -220,6 +236,7 @@ it("supports the retain annotation mode", async () => {
           tagName: "pre",
           properties: { className: ["imp-cb"] },
           children: [
+            lineNumbers(2),
             {
               type: "element",
               tagName: "code",
@@ -317,6 +334,7 @@ it("supports the ignore annotation mode", async () => {
           tagName: "pre",
           properties: { className: ["imp-cb"] },
           children: [
+            lineNumbers(2),
             {
               type: "element",
               tagName: "code",

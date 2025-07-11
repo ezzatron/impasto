@@ -1,7 +1,35 @@
-import type { Root } from "hast";
+import type { Element, Root } from "hast";
 import { createCoreTransform, createHighlighter } from "impasto";
 import common from "impasto/lang/common";
 import { expect, it } from "vitest";
+
+const space: Element = {
+  type: "element",
+  tagName: "span",
+  properties: { className: ["imp-s"] },
+  children: [{ type: "text", value: " " }],
+};
+
+const tab: Element = {
+  type: "element",
+  tagName: "span",
+  properties: { className: ["imp-t"] },
+  children: [{ type: "text", value: "\t" }],
+};
+
+const lineNumber = (n: number): Element => ({
+  type: "element",
+  tagName: "div",
+  properties: { className: ["imp-n"] },
+  children: [{ type: "text", value: String(n) }],
+});
+
+const lineNumbers = (n: number): Element => ({
+  type: "element",
+  tagName: "div",
+  properties: { className: ["imp-ln"] },
+  children: Array.from({ length: n }, (_, i) => lineNumber(i + 1)),
+});
 
 it("trims trailing whitespace from lines", async () => {
   const tree: Root = {
@@ -28,6 +56,7 @@ it("trims trailing whitespace from lines", async () => {
         tagName: "pre",
         properties: { className: ["imp-cb"] },
         children: [
+          lineNumbers(2),
           {
             type: "element",
             tagName: "code",
@@ -38,12 +67,7 @@ it("trims trailing whitespace from lines", async () => {
                 tagName: "div",
                 properties: { className: ["imp-l"] },
                 children: [
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["imp-s"] },
-                    children: [{ type: "text", value: " " }],
-                  },
+                  space,
                   { type: "text", value: "1" },
                   { type: "text", value: "\n" },
                 ],
@@ -53,18 +77,8 @@ it("trims trailing whitespace from lines", async () => {
                 tagName: "div",
                 properties: { className: ["imp-l"] },
                 children: [
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["imp-s"] },
-                    children: [{ type: "text", value: " " }],
-                  },
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["imp-s"] },
-                    children: [{ type: "text", value: " " }],
-                  },
+                  space,
+                  space,
                   { type: "text", value: "2" },
                   { type: "text", value: "\n" },
                 ],
@@ -91,6 +105,7 @@ it("wraps spaces", async () => {
         tagName: "pre",
         properties: { className: ["imp-cb"] },
         children: [
+          lineNumbers(1),
           {
             type: "element",
             tagName: "code",
@@ -101,31 +116,11 @@ it("wraps spaces", async () => {
                 tagName: "div",
                 properties: { className: ["imp-l"] },
                 children: [
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["imp-s"] },
-                    children: [{ type: "text", value: " " }],
-                  },
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["imp-s"] },
-                    children: [{ type: "text", value: " " }],
-                  },
+                  space,
+                  space,
                   { type: "text", value: "a" },
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["imp-s"] },
-                    children: [{ type: "text", value: " " }],
-                  },
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["imp-s"] },
-                    children: [{ type: "text", value: " " }],
-                  },
+                  space,
+                  space,
                   { type: "text", value: "b" },
                   { type: "text", value: "\n" },
                 ],
@@ -152,6 +147,7 @@ it("wraps tabs", async () => {
         tagName: "pre",
         properties: { className: ["imp-cb"] },
         children: [
+          lineNumbers(1),
           {
             type: "element",
             tagName: "code",
@@ -162,31 +158,11 @@ it("wraps tabs", async () => {
                 tagName: "div",
                 properties: { className: ["imp-l"] },
                 children: [
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["imp-t"] },
-                    children: [{ type: "text", value: "\t" }],
-                  },
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["imp-t"] },
-                    children: [{ type: "text", value: "\t" }],
-                  },
+                  tab,
+                  tab,
                   { type: "text", value: "a" },
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["imp-t"] },
-                    children: [{ type: "text", value: "\t" }],
-                  },
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["imp-t"] },
-                    children: [{ type: "text", value: "\t" }],
-                  },
+                  tab,
+                  tab,
                   { type: "text", value: "b" },
                   { type: "text", value: "\n" },
                 ],
@@ -213,6 +189,7 @@ it("wraps whitespace in code", async () => {
         tagName: "pre",
         properties: { className: ["imp-cb"] },
         children: [
+          lineNumbers(1),
           {
             type: "element",
             tagName: "code",
@@ -234,12 +211,7 @@ it("wraps whitespace in code", async () => {
                         properties: { className: ["pl-pds"] },
                         children: [{ type: "text", value: '"' }],
                       },
-                      {
-                        type: "element",
-                        tagName: "span",
-                        properties: { className: ["imp-s"] },
-                        children: [{ type: "text", value: " " }],
-                      },
+                      space,
                       {
                         type: "element",
                         tagName: "span",

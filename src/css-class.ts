@@ -11,6 +11,16 @@ export const codeBlock = `${base}-cb`;
 export const line = `${base}-l`;
 
 /**
+ * The CSS class for line numbers.
+ */
+export const lineNumber = `${base}-n`;
+
+/**
+ * The CSS class for the line number container.
+ */
+export const lineNumbers = `${base}-ln`;
+
+/**
  * The CSS class for spaces.
  */
 export const space = `${base}-s`;

@@ -1,6 +1,21 @@
+import type { Element } from "hast";
 import { createCoreTransform, createHighlighter } from "impasto";
 import common from "impasto/lang/common";
 import { expect, it } from "vitest";
+
+const lineNumber = (n: number): Element => ({
+  type: "element",
+  tagName: "div",
+  properties: { className: ["imp-n"] },
+  children: [{ type: "text", value: String(n) }],
+});
+
+const lineNumbers = (n: number): Element => ({
+  type: "element",
+  tagName: "div",
+  properties: { className: ["imp-ln"] },
+  children: Array.from({ length: n }, (_, i) => lineNumber(i + 1)),
+});
 
 it("supports sections", async () => {
   const highlighter = await createHighlighter(common);
@@ -50,6 +65,7 @@ it("supports sections", async () => {
         tagName: "pre",
         properties: { className: ["imp-cb"] },
         children: [
+          lineNumbers(11),
           {
             type: "element",
             tagName: "code",

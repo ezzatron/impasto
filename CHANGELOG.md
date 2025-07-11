@@ -10,6 +10,10 @@ Versioning].
 
 ## Unreleased
 
+### Added
+
+- Added line numbers to the core transform.
+
 ## [v0.2.0] - 2025-07-11
 
 [v0.2.0]: https://github.com/ezzatron/impasto/releases/tag/v0.2.0

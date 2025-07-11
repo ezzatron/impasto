@@ -1,14 +1,28 @@
-import type { Element, ElementContent, Root } from "hast";
+import type { Element, Root } from "hast";
 import { createCoreTransform, createHighlighter } from "impasto";
 import common from "impasto/lang/common";
 import { expect, it } from "vitest";
 
-const space: ElementContent = {
+const space: Element = {
   type: "element",
   tagName: "span",
   properties: { className: ["imp-s"] },
   children: [{ type: "text", value: " " }],
 };
+
+const lineNumber = (n: number): Element => ({
+  type: "element",
+  tagName: "div",
+  properties: { className: ["imp-n"] },
+  children: [{ type: "text", value: String(n) }],
+});
+
+const lineNumbers = (n: number): Element => ({
+  type: "element",
+  tagName: "div",
+  properties: { className: ["imp-ln"] },
+  children: Array.from({ length: n }, (_, i) => lineNumber(i + 1)),
+});
 
 it("strips JSX annotations", async () => {
   const highlighter = await createHighlighter(common);
@@ -33,6 +47,7 @@ a {/* [!name-b value b] extra content */}
         tagName: "pre",
         properties: { className: ["imp-cb"] },
         children: [
+          lineNumbers(4),
           {
             type: "element",
             tagName: "code",
@@ -268,6 +283,7 @@ it("doesn't strip surrounding nodes that are similar to JSX annotations", () => 
         tagName: "pre",
         properties: { className: ["imp-cb"] },
         children: [
+          lineNumbers(1),
           {
             type: "element",
             tagName: "code",

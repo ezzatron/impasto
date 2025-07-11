@@ -4,6 +4,8 @@ import { visit } from "unist-util-visit";
 import {
   codeBlock as codeBlockClass,
   line as lineClass,
+  lineNumber as lineNumberClass,
+  lineNumbers as lineNumbersClass,
   space as spaceClass,
   tab as tabClass,
 } from "./css-class.js";
@@ -105,6 +107,8 @@ export interface CoreTransformResult {
  * - Line splitting — Each line's content is wrapped with `<div class="imp-l">`
  * - Trimming/collapsing empty lines
  * - Trimming trailing whitespace from lines
+ * - Line numbering - Line numbers are added as a `<div class="imp-ln">` element
+ *   with `<div class="imp-n">` elements for each line number.
  * - Annotation parsing
  * - Section parsing
  * - Whitespace wrapping — Spaces are wrapped with `<span class="imp-s">`, and
@@ -140,6 +144,7 @@ export function createCoreTransform({
         tagName: "pre",
         properties: { className: [codeBlockClass] },
         children: [
+          createLineNumbers(lines.length),
           {
             type: "element",
             tagName: "code",
@@ -511,4 +516,24 @@ function trimSectionLines(lines: Element[]): void {
       line.properties[sectionNameAttr] = Array.from(lineSections).join(" ");
     }
   }
+}
+
+function createLineNumbers(count: number): Element {
+  const numbers: Element = {
+    type: "element",
+    tagName: "div",
+    properties: { className: [lineNumbersClass] },
+    children: [],
+  };
+
+  for (let i = 0; i < count; ++i) {
+    numbers.children.push({
+      type: "element",
+      tagName: "div",
+      properties: { className: [lineNumberClass] },
+      children: [{ type: "text", value: String(i + 1) }],
+    });
+  }
+
+  return numbers;
 }

@@ -1,14 +1,28 @@
-import type { ElementContent, Root } from "hast";
+import type { Element, Root } from "hast";
 import { createCoreTransform, createHighlighter } from "impasto";
 import common from "impasto/lang/common";
 import { expect, it } from "vitest";
 
-const space: ElementContent = {
+const space: Element = {
   type: "element",
   tagName: "span",
   properties: { className: ["imp-s"] },
   children: [{ type: "text", value: " " }],
 };
+
+const lineNumber = (n: number): Element => ({
+  type: "element",
+  tagName: "div",
+  properties: { className: ["imp-n"] },
+  children: [{ type: "text", value: String(n) }],
+});
+
+const lineNumbers = (n: number): Element => ({
+  type: "element",
+  tagName: "div",
+  properties: { className: ["imp-ln"] },
+  children: Array.from({ length: n }, (_, i) => lineNumber(i + 1)),
+});
 
 it("parses annotations", async () => {
   const highlighter = await createHighlighter(common);
@@ -53,6 +67,7 @@ it("strips annotations", async () => {
         tagName: "pre",
         properties: { className: ["imp-cb"] },
         children: [
+          lineNumbers(2),
           {
             type: "element",
             tagName: "code",
@@ -130,6 +145,7 @@ it("doesn't strip annotations in retain mode", async () => {
         tagName: "pre",
         properties: { className: ["imp-cb"] },
         children: [
+          lineNumbers(1),
           {
             type: "element",
             tagName: "code",
@@ -178,6 +194,7 @@ it("doesn't parse or strip annotations in ignore mode", async () => {
         tagName: "pre",
         properties: { className: ["imp-cb"] },
         children: [
+          lineNumbers(1),
           {
             type: "element",
             tagName: "code",
@@ -234,6 +251,7 @@ it("ignores unknown comment syntaxes", () => {
         tagName: "pre",
         properties: { className: ["imp-cb"] },
         children: [
+          lineNumbers(1),
           {
             type: "element",
             tagName: "code",
@@ -250,19 +268,9 @@ it("ignores unknown comment syntaxes", () => {
                     properties: { className: ["pl-c"] },
                     children: [
                       { type: "text", value: "!!" },
-                      {
-                        type: "element",
-                        tagName: "span",
-                        properties: { className: ["imp-s"] },
-                        children: [{ type: "text", value: " " }],
-                      },
+                      space,
                       { type: "text", value: "[!name" },
-                      {
-                        type: "element",
-                        tagName: "span",
-                        properties: { className: ["imp-s"] },
-                        children: [{ type: "text", value: " " }],
-                      },
+                      space,
                       { type: "text", value: "value]" },
                     ],
                   },
