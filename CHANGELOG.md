@@ -10,6 +10,10 @@ Versioning].
 
 ## Unreleased
 
+## [v0.5.1] - 2025-07-11
+
+[v0.5.1]: https://github.com/ezzatron/impasto/releases/tag/v0.5.1
+
 ### Fixed
 
 - Fixed loader schema to allow omitting the `replace` key when redacting.
