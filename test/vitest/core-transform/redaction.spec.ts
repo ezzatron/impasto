@@ -38,7 +38,7 @@ it("redacts sensitive information", async () => {
       },
       greeting: {
         search: [/hey/g],
-        replace: () => "WARM GREETINGS",
+        replace: () => undefined,
       },
     },
   });
@@ -166,16 +166,7 @@ it("redacts sensitive information", async () => {
                           className: ["imp-rd"],
                           "data-imp-rd": "greeting",
                         },
-                        children: [
-                          { type: "text", value: "WARM" },
-                          {
-                            type: "element",
-                            tagName: "span",
-                            properties: { className: ["imp-s"] },
-                            children: [{ type: "text", value: " " }],
-                          },
-                          { type: "text", value: "GREETINGS" },
-                        ],
+                        children: [],
                       },
                     ],
                   },

@@ -110,7 +110,7 @@ export interface RedactEntry {
   /**
    * How to replace the found information.
    */
-  replace: (match: RegExpExecArray) => string;
+  replace: (match: RegExpExecArray) => string | undefined;
 }
 
 /**
@@ -623,7 +623,7 @@ function applyRedaction(
 
         for (const search of entry.search) {
           for (const match of node.value.matchAll(search)) {
-            replacements.push([match, entry.replace(match)]);
+            replacements.push([match, entry.replace(match) ?? ""]);
           }
         }
 
