@@ -38,7 +38,6 @@ it("redacts sensitive information", async () => {
       },
       greeting: {
         search: [/hey/g],
-        replace: () => undefined,
       },
     },
   });
