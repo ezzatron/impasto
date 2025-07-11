@@ -25,10 +25,6 @@ export interface Highlighter
   highlight: (value: string, scope: string | undefined) => Root;
 }
 
-declare global {
-  var highlighter: Promise<Highlighter> | undefined;
-}
-
 /**
  * Creates a highlighter.
  */
