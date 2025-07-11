@@ -10,6 +10,14 @@ Versioning].
 
 ## Unreleased
 
+## [v0.3.1] - 2025-07-11
+
+[v0.3.1]: https://github.com/ezzatron/impasto/releases/tag/v0.3.1
+
+### Fixed
+
+- Removed unused global declaration for highlighter.
+
 ## [v0.3.0] - 2025-07-11
 
 [v0.3.0]: https://github.com/ezzatron/impasto/releases/tag/v0.3.0
