@@ -10,6 +10,14 @@ Versioning].
 
 ## Unreleased
 
+## [v0.6.0] - 2025-07-11
+
+[v0.6.0]: https://github.com/ezzatron/impasto/releases/tag/v0.6.0
+
+### Changed
+
+- The `replace` value can now be omitted when redacting information.
+
 ## [v0.5.1] - 2025-07-11
 
 [v0.5.1]: https://github.com/ezzatron/impasto/releases/tag/v0.5.1
