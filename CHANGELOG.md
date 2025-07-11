@@ -10,6 +10,14 @@ Versioning].
 
 ## Unreleased
 
+## [v0.4.0] - 2025-07-11
+
+[v0.4.0]: https://github.com/ezzatron/impasto/releases/tag/v0.4.0
+
+### Added
+
+- Added support for redacting sensitive information.
+
 ## [v0.3.1] - 2025-07-11
 
 [v0.3.1]: https://github.com/ezzatron/impasto/releases/tag/v0.3.1
