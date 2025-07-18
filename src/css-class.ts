@@ -26,6 +26,26 @@ export const lineNumbers = `${base}-ln`;
 export const redaction = `${base}-rd`;
 
 /**
+ * The CSS class for section content lines.
+ */
+export const sectionContent = `${base}-sc`;
+
+/**
+ * The CSS class for section content line indentation.
+ */
+export const sectionContentIndent = `${sectionContent}-i`;
+
+/**
+ * The CSS class for section context lines.
+ */
+export const sectionContext = `${base}-sx`;
+
+/**
+ * The CSS class for the line number container.
+ */
+export const showLineNumbers = `${lineNumbers}-s`;
+
+/**
  * The CSS class for spaces.
  */
 export const space = `${base}-s`;

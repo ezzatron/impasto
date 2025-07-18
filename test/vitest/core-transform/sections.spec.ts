@@ -1,16 +1,20 @@
-import type { Element } from "hast";
-import { createCoreTransform, createHighlighter } from "impasto";
+import {
+  createCoreTransform,
+  createHighlighter,
+  type LineNumberElement,
+  type LineNumbersElement,
+} from "impasto";
 import common from "impasto/lang/common";
 import { expect, it } from "vitest";
 
-const lineNumber = (n: number): Element => ({
+const lineNumber = (n: number): LineNumberElement => ({
   type: "element",
   tagName: "div",
   properties: { className: ["imp-n"] },
   children: [{ type: "text", value: String(n) }],
 });
 
-const lineNumbers = (n: number): Element => ({
+const lineNumbers = (n: number): LineNumbersElement => ({
   type: "element",
   tagName: "div",
   properties: { className: ["imp-ln"] },

@@ -1,4 +1,5 @@
 import type { Element } from "hast";
+import type { LineNumberElement, LineNumbersElement } from "impasto";
 import common from "impasto/lang/common";
 import type { LoadedCode } from "impasto/loader";
 import { resolve } from "node:path";
@@ -15,14 +16,14 @@ const space: Element = {
   children: [{ type: "text", value: " " }],
 };
 
-const lineNumber = (n: number): Element => ({
+const lineNumber = (n: number): LineNumberElement => ({
   type: "element",
   tagName: "div",
   properties: { className: ["imp-n"] },
   children: [{ type: "text", value: String(n) }],
 });
 
-const lineNumbers = (n: number): Element => ({
+const lineNumbers = (n: number): LineNumbersElement => ({
   type: "element",
   tagName: "div",
   properties: { className: ["imp-ln"] },
