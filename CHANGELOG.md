@@ -10,6 +10,10 @@ Versioning].
 
 ## Unreleased
 
+## [v0.7.0] - 2025-07-18
+
+[v0.7.0]: https://github.com/ezzatron/impasto/releases/tag/v0.7.0
+
 ### Added
 
 - Added the instance transform.
