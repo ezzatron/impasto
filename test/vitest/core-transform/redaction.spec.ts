@@ -7,6 +7,7 @@ import {
 } from "impasto";
 import common from "impasto/lang/common";
 import { expect, it } from "vitest";
+import { rootToHTML } from "../../hast.js";
 
 const space: Element = {
   type: "element",
@@ -48,6 +49,41 @@ it("redacts sensitive information", async () => {
   });
   coreTransform(tree);
 
+  expect(rootToHTML(tree)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+      </div>
+      <code>
+        <div class="imp-l">
+          <span class="pl-k">const</span>
+          <span class="imp-s"></span>
+          <span class="pl-c1">keys</span>
+          <span class="imp-s"></span>
+          <span class="pl-k">=</span>
+          <span class="imp-s"></span>
+          <span class="pl-s">
+            <span class="pl-pds">"</span>
+            <span class="imp-rd" data-imp-rd="api-key">REDACTED&#x3C;["key_test_a"]></span>
+            <span class="imp-s"></span>key_test_b
+            <span class="imp-s"></span>
+            <span class="imp-rd" data-imp-rd="api-key">REDACTED&#x3C;["key_prod_a","a"]></span>
+            <span class="imp-s"></span>
+            <span class="imp-rd" data-imp-rd="api-key">REDACTED&#x3C;["key_prod_b","b"]></span>
+            <span class="imp-s"></span>key_other
+            <span class="pl-pds">"</span>
+          </span>
+          <span class="imp-s"></span>
+          <span class="pl-c">//
+            <span class="imp-s"></span>
+            <span class="imp-rd" data-imp-rd="greeting"></span>
+          </span>
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(tree).toEqual({
     type: "root",
     children: [

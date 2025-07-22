@@ -7,6 +7,7 @@ import {
 } from "impasto";
 import common from "impasto/lang/common";
 import { expect, it } from "vitest";
+import { rootToHTML } from "../../hast.js";
 
 const space: Element = {
   type: "element",
@@ -64,6 +65,32 @@ it("strips annotations", async () => {
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
+  expect(rootToHTML(tree)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+        <div class="imp-n">2</div>
+      </div>
+      <code>
+        <div class="imp-l">
+          <span class="pl-c1">1</span>
+          <span class="imp-s"></span>
+          <span class="pl-c">//
+            <span class="imp-s"></span>extra
+            <span class="imp-s"></span>content
+          </span>
+        </div>
+        <div class="imp-l">
+          <span class="pl-c">//
+            <span class="imp-s"></span>normal
+            <span class="imp-s"></span>comment
+          </span>
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(tree).toEqual({
     type: "root",
     children: [
@@ -142,6 +169,23 @@ it("doesn't strip annotations in retain mode", async () => {
   expect(annotations).toEqual({
     0: [{ name: "name", value: "value" }],
   });
+  expect(rootToHTML(tree)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+      </div>
+      <code>
+        <div class="imp-l">
+          <span class="pl-c">//
+            <span class="imp-s"></span>[!name
+            <span class="imp-s"></span>value]
+          </span>
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(tree).toEqual({
     type: "root",
     children: [
@@ -191,6 +235,23 @@ it("doesn't parse or strip annotations in ignore mode", async () => {
   const { annotations } = coreTransform(tree);
 
   expect(annotations).toEqual({});
+  expect(rootToHTML(tree)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+      </div>
+      <code>
+        <div class="imp-l">
+          <span class="pl-c">//
+            <span class="imp-s"></span>[!name
+            <span class="imp-s"></span>value]
+          </span>
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(tree).toEqual({
     type: "root",
     children: [
@@ -248,6 +309,23 @@ it("ignores unknown comment syntaxes", () => {
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
+  expect(rootToHTML(tree)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+      </div>
+      <code>
+        <div class="imp-l">
+          <span class="pl-c">!!
+            <span class="imp-s"></span>[!name
+            <span class="imp-s"></span>value]
+          </span>
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(tree).toEqual({
     type: "root",
     children: [

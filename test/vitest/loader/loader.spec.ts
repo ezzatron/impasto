@@ -5,6 +5,7 @@ import type { LoadedCode } from "impasto/loader";
 import { resolve } from "node:path";
 import { expect, it } from "vitest";
 import { webpack, type Compiler } from "webpack";
+import { rootToHTML } from "../../hast.js";
 
 const artifactsPath = resolve(import.meta.dirname, "../../../artifacts");
 const outputDirPath = resolve(artifactsPath, "loader/output");
@@ -55,6 +56,24 @@ it("loads code", async () => {
 
   const result = await compile(compiler);
 
+  expect(rootToHTML(result.tree)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+        <div class="imp-n">2</div>
+      </div>
+      <code>
+        <div class="imp-l" data-imp-s="first-line">
+          <span class="pl-c1">1</span>;
+        </div>
+        <div class="imp-l">
+          <span class="pl-c1">2</span>;
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(result).toEqual({
     filename: "./fixture/basic/entry.js",
     scope: "source.js",
@@ -138,6 +157,24 @@ it("supports the strip annotation mode", async () => {
 
   const result = await compile(compiler);
 
+  expect(rootToHTML(result.tree)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+        <div class="imp-n">2</div>
+      </div>
+      <code>
+        <div class="imp-l" data-imp-s="first-line">
+          <span class="pl-c1">1</span>;
+        </div>
+        <div class="imp-l">
+          <span class="pl-c1">2</span>;
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(result).toEqual({
     filename: "./fixture/basic/entry.js",
     scope: "source.js",
@@ -221,6 +258,29 @@ it("supports the retain annotation mode", async () => {
 
   const result = await compile(compiler);
 
+  expect(rootToHTML(result.tree)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+        <div class="imp-n">2</div>
+      </div>
+      <code>
+        <div class="imp-l" data-imp-s="first-line">
+          <span class="pl-c1">1</span>;
+          <span class="imp-s"></span>
+          <span class="pl-c">//
+            <span class="imp-s"></span>[!section
+            <span class="imp-s"></span>first-line]
+          </span>
+        </div>
+        <div class="imp-l">
+          <span class="pl-c1">2</span>;
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(result).toEqual({
     filename: "./fixture/basic/entry.js",
     scope: "source.js",
@@ -318,6 +378,29 @@ it("supports the ignore annotation mode", async () => {
 
   const result = await compile(compiler);
 
+  expect(rootToHTML(result.tree)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+        <div class="imp-n">2</div>
+      </div>
+      <code>
+        <div class="imp-l">
+          <span class="pl-c1">1</span>;
+          <span class="imp-s"></span>
+          <span class="pl-c">//
+            <span class="imp-s"></span>[!section
+            <span class="imp-s"></span>first-line]
+          </span>
+        </div>
+        <div class="imp-l">
+          <span class="pl-c1">2</span>;
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(result).toEqual({
     filename: "./fixture/basic/entry.js",
     scope: "source.js",

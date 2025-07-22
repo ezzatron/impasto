@@ -64,6 +64,8 @@
     "eslint-plugin-n": "^17.21.0",
     "eslint-plugin-promise": "^7.2.1",
     "globals": "^16.3.0",
+    "hast-util-format": "^1.1.0",
+    "hast-util-to-html": "^9.0.5",
     "prettier": "^3.6.2",
     "prettier-plugin-organize-imports": "^4.1.0",
     "publint": "^0.3.12",

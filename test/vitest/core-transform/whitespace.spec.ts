@@ -7,6 +7,7 @@ import {
 } from "impasto";
 import common from "impasto/lang/common";
 import { expect, it } from "vitest";
+import { rootToHTML } from "../../hast.js";
 
 const space: Element = {
   type: "element",
@@ -53,6 +54,25 @@ it("trims trailing whitespace from lines", () => {
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
+  expect(rootToHTML(tree)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+        <div class="imp-n">2</div>
+      </div>
+      <code>
+        <div class="imp-l">
+          <span class="imp-s"></span>1
+        </div>
+        <div class="imp-l">
+          <span class="imp-s"></span>
+          <span class="imp-s"></span>2
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(tree).toEqual({
     type: "root",
     children: [
@@ -93,6 +113,23 @@ it("wraps spaces", async () => {
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
+  expect(rootToHTML(tree)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+      </div>
+      <code>
+        <div class="imp-l">
+          <span class="imp-s"></span>
+          <span class="imp-s"></span>a
+          <span class="imp-s"></span>
+          <span class="imp-s"></span>b
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(tree).toEqual({
     type: "root",
     children: [
@@ -134,6 +171,23 @@ it("wraps tabs", async () => {
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
+  expect(rootToHTML(tree)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+      </div>
+      <code>
+        <div class="imp-l">
+          <span class="imp-t"></span>
+          <span class="imp-t"></span>a
+          <span class="imp-t"></span>
+          <span class="imp-t"></span>b
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(tree).toEqual({
     type: "root",
     children: [
@@ -175,6 +229,25 @@ it("wraps whitespace in code", async () => {
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
+  expect(rootToHTML(tree)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+      </div>
+      <code>
+        <div class="imp-l">
+          <span class="pl-s">
+            <span class="pl-pds">"</span>
+            <span class="imp-s"></span>
+            <span class="imp-t"></span>1
+            <span class="pl-pds">"</span>
+          </span>
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(tree).toEqual({
     type: "root",
     children: [

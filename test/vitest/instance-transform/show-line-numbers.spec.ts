@@ -7,6 +7,7 @@ import {
 } from "impasto";
 import common from "impasto/lang/common";
 import { expect, it } from "vitest";
+import { rootToHTML } from "../../hast.js";
 
 const lineNumber = (n: number): LineNumberElement => ({
   type: "element",
@@ -30,6 +31,20 @@ it("doesn't show line numbers by default", async () => {
   const instanceTransform = createInstanceTransform();
   const transformed = instanceTransform(tree);
 
+  expect(rootToHTML(transformed)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+      </div>
+      <code>
+        <div class="imp-l">
+          <span class="pl-c1">1</span>
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(transformed).toEqual({
     type: "root",
     children: [
@@ -74,6 +89,20 @@ it("shows line numbers when enabled", async () => {
   const instanceTransform = createInstanceTransform({ showLineNumbers: true });
   const transformed = instanceTransform(tree);
 
+  expect(rootToHTML(transformed)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb imp-ln-s">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+      </div>
+      <code>
+        <div class="imp-l">
+          <span class="pl-c1">1</span>
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(transformed).toEqual({
     type: "root",
     children: [

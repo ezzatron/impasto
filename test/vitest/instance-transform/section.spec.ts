@@ -6,6 +6,7 @@ import {
 } from "impasto";
 import common from "impasto/lang/common";
 import { expect, it } from "vitest";
+import { rootToHTML } from "../../hast.js";
 
 const s = " ";
 const t = "\t";
@@ -42,6 +43,51 @@ ${t}${s}${s}4 // [!section-end section-b]
   const instanceTransform = createInstanceTransform();
   const transformed = instanceTransform(tree);
 
+  expect(rootToHTML(transformed)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+        <div class="imp-n">2</div>
+        <div class="imp-n">3</div>
+        <div class="imp-n">4</div>
+        <div class="imp-n">5</div>
+        <div class="imp-n">6</div>
+      </div>
+      <code>
+        <div class="imp-l" data-imp-s="section-a">
+          <span class="pl-c1">1</span>
+        </div>
+        <div class="imp-l" data-imp-s="section-b">
+          <span class="imp-t"></span>
+          <span class="imp-s"></span>
+          <span class="imp-s"></span>
+          <span class="pl-c1">2</span>
+        </div>
+        <div class="imp-l" data-imp-s="section-b section-c">
+          <span class="imp-t"></span>
+          <span class="imp-s"></span>
+          <span class="imp-s"></span>
+          <span class="imp-s"></span>
+          <span class="imp-s"></span>
+          <span class="pl-c1">3</span>
+        </div>
+        <div class="imp-l" data-imp-s="section-b">
+          <span class="imp-t"></span>
+          <span class="imp-s"></span>
+          <span class="imp-s"></span>
+          <span class="pl-c1">4</span>
+        </div>
+        <div class="imp-l" data-imp-s="section-d">
+          <span class="pl-c1">5</span>
+        </div>
+        <div class="imp-l">
+          <span class="pl-c1">6</span>
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(transformed).toEqual({
     type: "root",
     children: [
@@ -222,6 +268,57 @@ ${t}${s}${s}4 // [!section-end section-b]
   const instanceTransform = createInstanceTransform({ section: "section-b" });
   const transformed = instanceTransform(tree);
 
+  expect(rootToHTML(transformed)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb" data-imp-s="section-b" style="--imp-sc-i-s:2;--imp-sc-i-t:1">
+      <div class="imp-ln">
+        <div class="imp-n imp-sx">1</div>
+        <div class="imp-n imp-sc">2</div>
+        <div class="imp-n imp-sc">3</div>
+        <div class="imp-n imp-sc">4</div>
+        <div class="imp-n imp-sx">5</div>
+        <div class="imp-n imp-sx">6</div>
+      </div>
+      <code>
+        <div class="imp-l imp-sx" data-imp-s="section-a">
+          <span class="pl-c1">1</span>
+        </div>
+        <div class="imp-l imp-sc" data-imp-s="section-b">
+          <span class="imp-sc-i">
+            <span class="imp-t"></span>
+            <span class="imp-s"></span>
+            <span class="imp-s"></span>
+          </span>
+          <span class="pl-c1">2</span>
+        </div>
+        <div class="imp-l imp-sc" data-imp-s="section-b section-c">
+          <span class="imp-sc-i">
+            <span class="imp-t"></span>
+            <span class="imp-s"></span>
+            <span class="imp-s"></span>
+          </span>
+          <span class="imp-s"></span>
+          <span class="imp-s"></span>
+          <span class="pl-c1">3</span>
+        </div>
+        <div class="imp-l imp-sc" data-imp-s="section-b">
+          <span class="imp-sc-i">
+            <span class="imp-t"></span>
+            <span class="imp-s"></span>
+            <span class="imp-s"></span>
+          </span>
+          <span class="pl-c1">4</span>
+        </div>
+        <div class="imp-l imp-sx" data-imp-s="section-d">
+          <span class="pl-c1">5</span>
+        </div>
+        <div class="imp-l imp-sx">
+          <span class="pl-c1">6</span>
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(transformed).toEqual({
     type: "root",
     children: [
@@ -441,6 +538,34 @@ ${s}${s}${t}2 // [!section-end section-a]
   const instanceTransform = createInstanceTransform({ section: "section-a" });
   const transformed = instanceTransform(tree);
 
+  expect(rootToHTML(transformed)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb" data-imp-s="section-a" style="--imp-sc-i-s:0;--imp-sc-i-t:0">
+      <div class="imp-ln">
+        <div class="imp-n imp-sc">1</div>
+        <div class="imp-n imp-sc">2</div>
+        <div class="imp-n imp-sx">3</div>
+      </div>
+      <code>
+        <div class="imp-l imp-sc" data-imp-s="section-a">
+          <span class="imp-t"></span>
+          <span class="imp-s"></span>
+          <span class="imp-s"></span>
+          <span class="pl-c1">1</span>
+        </div>
+        <div class="imp-l imp-sc" data-imp-s="section-a">
+          <span class="imp-s"></span>
+          <span class="imp-s"></span>
+          <span class="imp-t"></span>
+          <span class="pl-c1">2</span>
+        </div>
+        <div class="imp-l imp-sx">
+          <span class="pl-c1">3</span>
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(transformed).toEqual({
     type: "root",
     children: [

@@ -2,6 +2,7 @@ import type { Root } from "hast";
 import { createCoreTransform, createHighlighter } from "impasto";
 import common from "impasto/lang/common";
 import { expect, it } from "vitest";
+import { rootToHTML } from "../../hast.js";
 
 it("splits lines terminated with newlines", async () => {
   const highlighter = await createHighlighter(common);
@@ -9,6 +10,24 @@ it("splits lines terminated with newlines", async () => {
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
+  expect(rootToHTML(tree)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+        <div class="imp-n">2</div>
+      </div>
+      <code>
+        <div class="imp-l">
+          <span class="pl-c1">1</span>
+        </div>
+        <div class="imp-l">
+          <span class="pl-c1">2</span>
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(tree).toEqual({
     type: "root",
     children: [
@@ -83,6 +102,24 @@ it("handles missing terminal newlines", async () => {
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
+  expect(rootToHTML(tree)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+        <div class="imp-n">2</div>
+      </div>
+      <code>
+        <div class="imp-l">
+          <span class="pl-c1">1</span>
+        </div>
+        <div class="imp-l">
+          <span class="pl-c1">2</span>
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(tree).toEqual({
     type: "root",
     children: [
@@ -167,6 +204,22 @@ b
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
+  expect(rootToHTML(tree)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+        <div class="imp-n">2</div>
+        <div class="imp-n">3</div>
+      </div>
+      <code>
+        <div class="imp-l">a</div>
+        <div class="imp-l"></div>
+        <div class="imp-l">b</div>
+      </code>
+    </pre>
+    "
+  `);
   expect(tree).toEqual({
     type: "root",
     children: [
@@ -243,6 +296,18 @@ it("ignores unexpected node types", () => {
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
+  expect(rootToHTML(tree)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+      </div>
+      <code>
+        <div class="imp-l">a</div>
+      </code>
+    </pre>
+    "
+  `);
   expect(tree).toEqual({
     type: "root",
     children: [

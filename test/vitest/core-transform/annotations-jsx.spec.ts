@@ -7,6 +7,7 @@ import {
 } from "impasto";
 import common from "impasto/lang/common";
 import { expect, it } from "vitest";
+import { rootToHTML } from "../../hast.js";
 
 const space: Element = {
   type: "element",
@@ -44,6 +45,44 @@ a {/* [!name-b value b] extra content */}
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
+  expect(rootToHTML(tree)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+        <div class="imp-n">2</div>
+        <div class="imp-n">3</div>
+        <div class="imp-n">4</div>
+      </div>
+      <code>
+        <div class="imp-l">&#x3C;
+          <span class="pl-ent">div</span>>
+        </div>
+        <div class="imp-l">a
+          <span class="imp-s"></span>
+          <span class="pl-pse">{</span>
+          <span class="pl-c">/*
+            <span class="imp-s"></span>extra
+            <span class="imp-s"></span>content*/
+          </span>
+          <span class="pl-pse">}</span>
+        </div>
+        <div class="imp-l">
+          <span class="pl-pse">{</span>
+          <span class="pl-c">/*
+            <span class="imp-s"></span>normal
+            <span class="imp-s"></span>comment
+            <span class="imp-s"></span>*/
+          </span>
+          <span class="pl-pse">}</span>
+        </div>
+        <div class="imp-l">&#x3C;/
+          <span class="pl-ent">div</span>>
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(tree).toEqual({
     type: "root",
     children: [
@@ -278,6 +317,33 @@ it("doesn't strip surrounding nodes that are similar to JSX annotations", () => 
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
+  expect(rootToHTML(tree)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+      </div>
+      <code>
+        <div class="imp-l">a
+          <div class="">}</div>
+          <div></div>
+          <div class="">}</div>
+          <div><!--a--></div>
+          <div class="">}</div>
+          <div class="">a</div>
+          <div class="">}</div>
+          <div class="">{</div>a
+          <div class="">{</div>
+          <div></div>
+          <div class="">{</div>
+          <div><!--a--></div>
+          <div class="">{</div>
+          <div class="">a</div>
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(tree).toEqual({
     type: "root",
     children: [

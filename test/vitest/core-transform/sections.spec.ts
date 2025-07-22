@@ -6,6 +6,7 @@ import {
 } from "impasto";
 import common from "impasto/lang/common";
 import { expect, it } from "vitest";
+import { rootToHTML } from "../../hast.js";
 
 const lineNumber = (n: number): LineNumberElement => ({
   type: "element",
@@ -61,6 +62,50 @@ it("supports sections", async () => {
   const coreTransform = createCoreTransform();
   coreTransform(tree);
 
+  expect(rootToHTML(tree)).toMatchInlineSnapshot(`
+    "
+    <pre class="imp-cb">
+      <div class="imp-ln">
+        <div class="imp-n">1</div>
+        <div class="imp-n">2</div>
+        <div class="imp-n">3</div>
+        <div class="imp-n">4</div>
+        <div class="imp-n">5</div>
+        <div class="imp-n">6</div>
+        <div class="imp-n">7</div>
+        <div class="imp-n">8</div>
+        <div class="imp-n">9</div>
+        <div class="imp-n">10</div>
+        <div class="imp-n">11</div>
+      </div>
+      <code>
+        <div class="imp-l">
+          <span class="pl-c1">1</span>
+        </div>
+        <div class="imp-l"></div>
+        <div class="imp-l" data-imp-s="section-d">
+          <span class="pl-c1">2</span>
+        </div>
+        <div class="imp-l" data-imp-s="section-d"></div>
+        <div class="imp-l" data-imp-s="section-a section-b section-c section-d section-e">
+          <span class="pl-c1">3</span>
+        </div>
+        <div class="imp-l" data-imp-s="section-c section-d section-e"></div>
+        <div class="imp-l" data-imp-s="section-c section-d section-e">
+          <span class="pl-c1">4</span>
+        </div>
+        <div class="imp-l" data-imp-s="section-c"></div>
+        <div class="imp-l" data-imp-s="section-c">
+          <span class="pl-c1">5</span>
+        </div>
+        <div class="imp-l"></div>
+        <div class="imp-l">
+          <span class="pl-c1">6</span>
+        </div>
+      </code>
+    </pre>
+    "
+  `);
   expect(tree).toEqual({
     type: "root",
     children: [
