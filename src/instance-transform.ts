@@ -206,45 +206,29 @@ function wrapSectionIndent(
   noSectionContext: boolean,
   lines: Element[],
 ): [spaceCount: number, tabCount: number] {
-  const indents: [string, Element[], Element][] = [];
-
-  for (let i = 0; i < lines.length; ++i) {
-    const line = lines[i];
-    const indentElements: Element[] = [];
-    let indent = "";
-
-    for (const child of line.children) {
-      if (!isWhitespace(child)) break;
-
-      indentElements.push(child);
-      indent += child.children[0].value;
-    }
-
-    indents.push([indent, indentElements, line]);
-  }
-
-  let minIndentCharCount = Infinity;
   let indent = "";
-  let indentElements: Element[] = [];
 
-  for (const [lineIndent, lineIndentElements] of indents) {
-    const indentCharCount = lineIndent.length;
+  for (const element of lines[0].children) {
+    if (!isWhitespace(element)) break;
 
-    if (indentCharCount >= 0 && indentCharCount < minIndentCharCount) {
-      minIndentCharCount = indentCharCount;
-      indent = lineIndent;
-      indentElements = lineIndentElements;
-    }
+    indent += element.children[0].value;
   }
 
-  for (const [lineIndent] of indents) {
-    if (!lineIndent.startsWith(indent)) return [0, 0]; // Indent is inconsistent
-  }
-
+  let i;
   let spaceCount = 0;
   let tabCount = 0;
 
-  for (const char of indent) {
+  outer: for (i = 0; i < indent.length; ++i) {
+    const char = indent[i];
+
+    for (let j = 1; j < lines.length; ++j) {
+      const element = lines[j].children[i];
+
+      if (!isWhitespace(element) || element.children[0].value !== char) {
+        break outer;
+      }
+    }
+
     if (char === "\t") {
       ++tabCount;
     } else {
@@ -252,23 +236,19 @@ function wrapSectionIndent(
     }
   }
 
-  if (noSectionContext) {
-    for (const [, , line] of indents) {
-      line.children.splice(0, indentElements.length);
+  if (i < 1) return [0, 0];
+
+  for (const line of lines) {
+    if (noSectionContext) {
+      line.children.splice(0, i);
+    } else {
+      line.children.splice(0, i, {
+        type: "element",
+        tagName: "span",
+        properties: { className: [sectionContentIndentClass] },
+        children: line.children.slice(0, i),
+      });
     }
-
-    return [spaceCount, tabCount];
-  }
-
-  for (const [, , line] of indents) {
-    line.children.splice(0, indentElements.length, {
-      type: "element",
-      tagName: "span",
-      children: indentElements,
-      properties: {
-        className: [sectionContentIndentClass],
-      },
-    });
   }
 
   return [spaceCount, tabCount];
