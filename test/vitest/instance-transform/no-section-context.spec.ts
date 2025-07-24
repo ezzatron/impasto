@@ -32,12 +32,12 @@ ${t}${s}${s}4 // [!section-end section-b]
     "source.js",
   );
   const coreTransform = createCoreTransform();
-  coreTransform(tree);
+  const { tree: coreTree } = coreTransform(tree);
   const instanceTransform = createInstanceTransform({
     section: "section-b",
     noSectionContext: true,
   });
-  const transformed = instanceTransform(tree);
+  const transformed = instanceTransform(coreTree);
 
   expect(rootToHTML(transformed)).toMatchInlineSnapshot(`
     "

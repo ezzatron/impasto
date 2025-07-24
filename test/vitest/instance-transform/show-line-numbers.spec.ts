@@ -27,9 +27,9 @@ it("doesn't show line numbers by default", async () => {
   const highlighter = await createHighlighter(common);
   const tree = highlighter.highlight("1", "source.js");
   const coreTransform = createCoreTransform();
-  coreTransform(tree);
+  const { tree: coreTree } = coreTransform(tree);
   const instanceTransform = createInstanceTransform();
-  const transformed = instanceTransform(tree);
+  const transformed = instanceTransform(coreTree);
 
   expect(rootToHTML(transformed)).toMatchInlineSnapshot(`
     "
@@ -85,9 +85,9 @@ it("shows line numbers when enabled", async () => {
   const highlighter = await createHighlighter(common);
   const tree = highlighter.highlight("1", "source.js");
   const coreTransform = createCoreTransform();
-  coreTransform(tree);
+  const { tree: coreTree } = coreTransform(tree);
   const instanceTransform = createInstanceTransform({ showLineNumbers: true });
-  const transformed = instanceTransform(tree);
+  const transformed = instanceTransform(coreTree);
 
   expect(rootToHTML(transformed)).toMatchInlineSnapshot(`
     "

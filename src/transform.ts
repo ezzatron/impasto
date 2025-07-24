@@ -1,4 +1,4 @@
-import type { Root } from "hast";
+import type { Root } from "./impasto-tree.js";
 
 /**
  * Transforms an HTML AST produced by the highlighter.

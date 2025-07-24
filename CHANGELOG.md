@@ -10,6 +10,13 @@ Versioning].
 
 ## Unreleased
 
+### Changed
+
+- **\[BREAKING]** The `Transform` type now uses Impasto's own `Root` type
+  instead of the `Root` type from `hast`.
+- The core transform now returns a new reference to the input tree, but typed
+  with Impasto's own `Root` type.
+
 ## [v0.7.0] - 2025-07-18
 
 [v0.7.0]: https://github.com/ezzatron/impasto/releases/tag/v0.7.0

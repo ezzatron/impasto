@@ -39,9 +39,9 @@ ${t}${s}${s}4 // [!section-end section-b]
     "source.js",
   );
   const coreTransform = createCoreTransform();
-  coreTransform(tree);
+  const { tree: coreTree } = coreTransform(tree);
   const instanceTransform = createInstanceTransform();
-  const transformed = instanceTransform(tree);
+  const transformed = instanceTransform(coreTree);
 
   expect(rootToHTML(transformed)).toMatchInlineSnapshot(`
     "
@@ -264,9 +264,9 @@ ${t}${s}${s}4 // [!section-end section-b]
     "source.js",
   );
   const coreTransform = createCoreTransform();
-  coreTransform(tree);
+  const { tree: coreTree } = coreTransform(tree);
   const instanceTransform = createInstanceTransform({ section: "section-b" });
-  const transformed = instanceTransform(tree);
+  const transformed = instanceTransform(coreTree);
 
   expect(rootToHTML(transformed)).toMatchInlineSnapshot(`
     "
@@ -516,11 +516,11 @@ it("does nothing if the section spans all lines", async () => {
     "source.js",
   );
   const coreTransform = createCoreTransform();
-  coreTransform(tree);
+  const { tree: coreTree } = coreTransform(tree);
   const instanceTransform = createInstanceTransform({ section: "section-a" });
-  const transformed = instanceTransform(tree);
+  const transformed = instanceTransform(coreTree);
 
-  expect(transformed).toEqual(tree);
+  expect(transformed).toEqual(coreTree);
 });
 
 it("handles inconsistent indentation", async () => {
@@ -534,9 +534,9 @@ ${s}${s}${t}2 // [!section-end section-a]
     "source.js",
   );
   const coreTransform = createCoreTransform();
-  coreTransform(tree);
+  const { tree: coreTree } = coreTransform(tree);
   const instanceTransform = createInstanceTransform({ section: "section-a" });
-  const transformed = instanceTransform(tree);
+  const transformed = instanceTransform(coreTree);
 
   expect(rootToHTML(transformed)).toMatchInlineSnapshot(`
     "
@@ -674,10 +674,10 @@ it("throws if the section is not found", async () => {
   const highlighter = await createHighlighter(common);
   const tree = highlighter.highlight("1", "source.js");
   const coreTransform = createCoreTransform();
-  coreTransform(tree);
+  const { tree: coreTree } = coreTransform(tree);
   const instanceTransform = createInstanceTransform({ section: "section-a" });
 
-  expect(() => instanceTransform(tree)).toThrow(
+  expect(() => instanceTransform(coreTree)).toThrow(
     "Missing code section section-a",
   );
 });

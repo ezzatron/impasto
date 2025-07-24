@@ -1,4 +1,4 @@
-import type { Element, ElementContent, Root, Text } from "hast";
+import type { Element, ElementContent, Root as HastRoot, Text } from "hast";
 import createClassList from "hast-util-class-list";
 import { visit } from "unist-util-visit";
 import {
@@ -14,7 +14,7 @@ import {
   redactionType as redactionTypeAttr,
   sectionName as sectionNameAttr,
 } from "./data-attribute.js";
-import type { Transform } from "./transform.js";
+import type { Root as ImpastoRoot } from "./impasto-tree.js";
 
 /**
  * Matches annotations.
@@ -121,6 +121,11 @@ export interface CoreTransformResult {
    * Annotations found in the code.
    */
   annotations: Record<string, Annotation[]>;
+
+  /**
+   * A reference to the original tree, but with the Impasto Root type.
+   */
+  tree: ImpastoRoot;
 }
 
 /**
@@ -148,7 +153,7 @@ export interface CoreTransformResult {
 export function createCoreTransform({
   annotationMode = "strip",
   redact = {},
-}: CoreTransformOptions = {}): Transform<CoreTransformResult> {
+}: CoreTransformOptions = {}): (tree: HastRoot) => CoreTransformResult {
   return (tree) => {
     const shouldParse = annotationMode !== "ignore";
     const lines = splitLines(tree);
@@ -189,11 +194,11 @@ export function createCoreTransform({
       },
     ];
 
-    return { annotations };
+    return { annotations, tree: tree as ImpastoRoot };
   };
 }
 
-function splitLines(tree: Root): Element[] {
+function splitLines(tree: HastRoot): Element[] {
   const lines: Element[] = [];
   let line: Element = emptyLine();
 

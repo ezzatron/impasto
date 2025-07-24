@@ -1,4 +1,4 @@
-import type { Element, Root } from "hast";
+import type { Element } from "hast";
 import createClassList from "hast-util-class-list";
 import {
   sectionContent as sectionContentClass,
@@ -16,6 +16,7 @@ import {
   isWhitespace,
   type LineElement,
   type LineNumberElement,
+  type Root,
 } from "./impasto-tree.js";
 import type { Transform } from "./transform.js";
 
