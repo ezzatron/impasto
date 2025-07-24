@@ -10,6 +10,10 @@ Versioning].
 
 ## Unreleased
 
+## [v0.8.0] - 2025-07-24
+
+[v0.8.0]: https://github.com/ezzatron/impasto/releases/tag/v0.8.0
+
 ### Changed
 
 - **\[BREAKING]** The `Transform` type now uses Impasto's own `Root` type
