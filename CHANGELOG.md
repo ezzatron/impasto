@@ -10,6 +10,16 @@ Versioning].
 
 ## Unreleased
 
+## Added
+
+- Added the `splitSection` function to split code into section content and
+  context lines.
+
+## Changed
+
+- **\[BREAKING]** Removed line number generation.
+- **\[BREAKING]** Removed the instance transform.
+
 ## [v0.8.0] - 2025-07-24
 
 [v0.8.0]: https://github.com/ezzatron/impasto/releases/tag/v0.8.0

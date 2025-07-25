@@ -1,5 +1,4 @@
 import type { Element } from "hast";
-import type { LineNumberElement, LineNumbersElement } from "impasto";
 import common from "impasto/lang/common";
 import type { LoadedCode } from "impasto/loader";
 import { resolve } from "node:path";
@@ -16,20 +15,6 @@ const space: Element = {
   properties: { className: ["imp-s"] },
   children: [{ type: "text", value: " " }],
 };
-
-const lineNumber = (n: number): LineNumberElement => ({
-  type: "element",
-  tagName: "div",
-  properties: { className: ["imp-n"] },
-  children: [{ type: "text", value: String(n) }],
-});
-
-const lineNumbers = (n: number): LineNumbersElement => ({
-  type: "element",
-  tagName: "div",
-  properties: { className: ["imp-ln"] },
-  children: Array.from({ length: n }, (_, i) => lineNumber(i + 1)),
-});
 
 it("loads code", async () => {
   const outputPath = resolve(outputDirPath, "loads-code");
@@ -58,73 +43,49 @@ it("loads code", async () => {
 
   expect(rootToHTML(result.tree)).toMatchInlineSnapshot(`
     "
-    <pre class="imp-cb">
-      <div class="imp-ln">
-        <div class="imp-n">1</div>
-        <div class="imp-n">2</div>
-      </div>
-      <code>
-        <div class="imp-l" data-imp-s="first-line">
-          <span class="pl-c1">1</span>;
-        </div>
-        <div class="imp-l">
-          <span class="pl-c1">2</span>;
-        </div>
-      </code>
-    </pre>
+    <div class="imp-l" data-imp-s="first-line">
+      <span class="pl-c1">1</span>;
+    </div>
+    <div class="imp-l">
+      <span class="pl-c1">2</span>;
+    </div>
     "
   `);
   expect(result).toEqual({
     filename: "./fixture/basic/entry.js",
     scope: "source.js",
-    lineNumbers: true,
     tree: {
       type: "root",
       children: [
         {
           type: "element",
-          tagName: "pre",
-          properties: { className: ["imp-cb"] },
+          tagName: "div",
+          properties: {
+            className: ["imp-l"],
+            "data-imp-s": "first-line",
+          },
           children: [
-            lineNumbers(2),
             {
               type: "element",
-              tagName: "code",
-              properties: {},
-              children: [
-                {
-                  type: "element",
-                  tagName: "div",
-                  properties: {
-                    className: ["imp-l"],
-                    "data-imp-s": "first-line",
-                  },
-                  children: [
-                    {
-                      type: "element",
-                      tagName: "span",
-                      properties: { className: ["pl-c1"] },
-                      children: [{ type: "text", value: "1" }],
-                    },
-                    { type: "text", value: ";\n" },
-                  ],
-                },
-                {
-                  type: "element",
-                  tagName: "div",
-                  properties: { className: ["imp-l"] },
-                  children: [
-                    {
-                      type: "element",
-                      tagName: "span",
-                      properties: { className: ["pl-c1"] },
-                      children: [{ type: "text", value: "2" }],
-                    },
-                    { type: "text", value: ";\n" },
-                  ],
-                },
-              ],
+              tagName: "span",
+              properties: { className: ["pl-c1"] },
+              children: [{ type: "text", value: "1" }],
             },
+            { type: "text", value: ";\n" },
+          ],
+        },
+        {
+          type: "element",
+          tagName: "div",
+          properties: { className: ["imp-l"] },
+          children: [
+            {
+              type: "element",
+              tagName: "span",
+              properties: { className: ["pl-c1"] },
+              children: [{ type: "text", value: "2" }],
+            },
+            { type: "text", value: ";\n" },
           ],
         },
       ],
@@ -159,73 +120,49 @@ it("supports the strip annotation mode", async () => {
 
   expect(rootToHTML(result.tree)).toMatchInlineSnapshot(`
     "
-    <pre class="imp-cb">
-      <div class="imp-ln">
-        <div class="imp-n">1</div>
-        <div class="imp-n">2</div>
-      </div>
-      <code>
-        <div class="imp-l" data-imp-s="first-line">
-          <span class="pl-c1">1</span>;
-        </div>
-        <div class="imp-l">
-          <span class="pl-c1">2</span>;
-        </div>
-      </code>
-    </pre>
+    <div class="imp-l" data-imp-s="first-line">
+      <span class="pl-c1">1</span>;
+    </div>
+    <div class="imp-l">
+      <span class="pl-c1">2</span>;
+    </div>
     "
   `);
   expect(result).toEqual({
     filename: "./fixture/basic/entry.js",
     scope: "source.js",
-    lineNumbers: true,
     tree: {
       type: "root",
       children: [
         {
           type: "element",
-          tagName: "pre",
-          properties: { className: ["imp-cb"] },
+          tagName: "div",
+          properties: {
+            className: ["imp-l"],
+            "data-imp-s": "first-line",
+          },
           children: [
-            lineNumbers(2),
             {
               type: "element",
-              tagName: "code",
-              properties: {},
-              children: [
-                {
-                  type: "element",
-                  tagName: "div",
-                  properties: {
-                    className: ["imp-l"],
-                    "data-imp-s": "first-line",
-                  },
-                  children: [
-                    {
-                      type: "element",
-                      tagName: "span",
-                      properties: { className: ["pl-c1"] },
-                      children: [{ type: "text", value: "1" }],
-                    },
-                    { type: "text", value: ";\n" },
-                  ],
-                },
-                {
-                  type: "element",
-                  tagName: "div",
-                  properties: { className: ["imp-l"] },
-                  children: [
-                    {
-                      type: "element",
-                      tagName: "span",
-                      properties: { className: ["pl-c1"] },
-                      children: [{ type: "text", value: "2" }],
-                    },
-                    { type: "text", value: ";\n" },
-                  ],
-                },
-              ],
+              tagName: "span",
+              properties: { className: ["pl-c1"] },
+              children: [{ type: "text", value: "1" }],
             },
+            { type: "text", value: ";\n" },
+          ],
+        },
+        {
+          type: "element",
+          tagName: "div",
+          properties: { className: ["imp-l"] },
+          children: [
+            {
+              type: "element",
+              tagName: "span",
+              properties: { className: ["pl-c1"] },
+              children: [{ type: "text", value: "2" }],
+            },
+            { type: "text", value: ";\n" },
           ],
         },
       ],
@@ -260,92 +197,68 @@ it("supports the retain annotation mode", async () => {
 
   expect(rootToHTML(result.tree)).toMatchInlineSnapshot(`
     "
-    <pre class="imp-cb">
-      <div class="imp-ln">
-        <div class="imp-n">1</div>
-        <div class="imp-n">2</div>
-      </div>
-      <code>
-        <div class="imp-l" data-imp-s="first-line">
-          <span class="pl-c1">1</span>;
-          <span class="imp-s"></span>
-          <span class="pl-c">//
-            <span class="imp-s"></span>[!section
-            <span class="imp-s"></span>first-line]
-          </span>
-        </div>
-        <div class="imp-l">
-          <span class="pl-c1">2</span>;
-        </div>
-      </code>
-    </pre>
+    <div class="imp-l" data-imp-s="first-line">
+      <span class="pl-c1">1</span>;
+      <span class="imp-s"></span>
+      <span class="pl-c">//
+        <span class="imp-s"></span>[!section
+        <span class="imp-s"></span>first-line]
+      </span>
+    </div>
+    <div class="imp-l">
+      <span class="pl-c1">2</span>;
+    </div>
     "
   `);
   expect(result).toEqual({
     filename: "./fixture/basic/entry.js",
     scope: "source.js",
-    lineNumbers: true,
     tree: {
       type: "root",
       children: [
         {
           type: "element",
-          tagName: "pre",
-          properties: { className: ["imp-cb"] },
+          tagName: "div",
+          properties: {
+            className: ["imp-l"],
+            "data-imp-s": "first-line",
+          },
           children: [
-            lineNumbers(2),
             {
               type: "element",
-              tagName: "code",
-              properties: {},
+              tagName: "span",
+              properties: { className: ["pl-c1"] },
+              children: [{ type: "text", value: "1" }],
+            },
+            { type: "text", value: ";" },
+            space,
+            {
+              type: "element",
+              tagName: "span",
+              properties: { className: ["pl-c"] },
               children: [
-                {
-                  type: "element",
-                  tagName: "div",
-                  properties: {
-                    className: ["imp-l"],
-                    "data-imp-s": "first-line",
-                  },
-                  children: [
-                    {
-                      type: "element",
-                      tagName: "span",
-                      properties: { className: ["pl-c1"] },
-                      children: [{ type: "text", value: "1" }],
-                    },
-                    { type: "text", value: ";" },
-                    space,
-                    {
-                      type: "element",
-                      tagName: "span",
-                      properties: { className: ["pl-c"] },
-                      children: [
-                        { type: "text", value: "//" },
-                        space,
-                        { type: "text", value: "[!section" },
-                        space,
-                        { type: "text", value: "first-line]" },
-                      ],
-                    },
-                    { type: "text", value: "\n" },
-                  ],
-                },
-                {
-                  type: "element",
-                  tagName: "div",
-                  properties: { className: ["imp-l"] },
-                  children: [
-                    {
-                      type: "element",
-                      tagName: "span",
-                      properties: { className: ["pl-c1"] },
-                      children: [{ type: "text", value: "2" }],
-                    },
-                    { type: "text", value: ";\n" },
-                  ],
-                },
+                { type: "text", value: "//" },
+                space,
+                { type: "text", value: "[!section" },
+                space,
+                { type: "text", value: "first-line]" },
               ],
             },
+            { type: "text", value: "\n" },
+          ],
+        },
+        {
+          type: "element",
+          tagName: "div",
+          properties: { className: ["imp-l"] },
+          children: [
+            {
+              type: "element",
+              tagName: "span",
+              properties: { className: ["pl-c1"] },
+              children: [{ type: "text", value: "2" }],
+            },
+            { type: "text", value: ";\n" },
           ],
         },
       ],
@@ -380,89 +293,65 @@ it("supports the ignore annotation mode", async () => {
 
   expect(rootToHTML(result.tree)).toMatchInlineSnapshot(`
     "
-    <pre class="imp-cb">
-      <div class="imp-ln">
-        <div class="imp-n">1</div>
-        <div class="imp-n">2</div>
-      </div>
-      <code>
-        <div class="imp-l">
-          <span class="pl-c1">1</span>;
-          <span class="imp-s"></span>
-          <span class="pl-c">//
-            <span class="imp-s"></span>[!section
-            <span class="imp-s"></span>first-line]
-          </span>
-        </div>
-        <div class="imp-l">
-          <span class="pl-c1">2</span>;
-        </div>
-      </code>
-    </pre>
+    <div class="imp-l">
+      <span class="pl-c1">1</span>;
+      <span class="imp-s"></span>
+      <span class="pl-c">//
+        <span class="imp-s"></span>[!section
+        <span class="imp-s"></span>first-line]
+      </span>
+    </div>
+    <div class="imp-l">
+      <span class="pl-c1">2</span>;
+    </div>
     "
   `);
   expect(result).toEqual({
     filename: "./fixture/basic/entry.js",
     scope: "source.js",
-    lineNumbers: true,
     tree: {
       type: "root",
       children: [
         {
           type: "element",
-          tagName: "pre",
-          properties: { className: ["imp-cb"] },
+          tagName: "div",
+          properties: { className: ["imp-l"] },
           children: [
-            lineNumbers(2),
             {
               type: "element",
-              tagName: "code",
-              properties: {},
+              tagName: "span",
+              properties: { className: ["pl-c1"] },
+              children: [{ type: "text", value: "1" }],
+            },
+            { type: "text", value: ";" },
+            space,
+            {
+              type: "element",
+              tagName: "span",
+              properties: { className: ["pl-c"] },
               children: [
-                {
-                  type: "element",
-                  tagName: "div",
-                  properties: { className: ["imp-l"] },
-                  children: [
-                    {
-                      type: "element",
-                      tagName: "span",
-                      properties: { className: ["pl-c1"] },
-                      children: [{ type: "text", value: "1" }],
-                    },
-                    { type: "text", value: ";" },
-                    space,
-                    {
-                      type: "element",
-                      tagName: "span",
-                      properties: { className: ["pl-c"] },
-                      children: [
-                        { type: "text", value: "//" },
-                        space,
-                        { type: "text", value: "[!section" },
-                        space,
-                        { type: "text", value: "first-line]" },
-                      ],
-                    },
-                    { type: "text", value: "\n" },
-                  ],
-                },
-                {
-                  type: "element",
-                  tagName: "div",
-                  properties: { className: ["imp-l"] },
-                  children: [
-                    {
-                      type: "element",
-                      tagName: "span",
-                      properties: { className: ["pl-c1"] },
-                      children: [{ type: "text", value: "2" }],
-                    },
-                    { type: "text", value: ";\n" },
-                  ],
-                },
+                { type: "text", value: "//" },
+                space,
+                { type: "text", value: "[!section" },
+                space,
+                { type: "text", value: "first-line]" },
               ],
             },
+            { type: "text", value: "\n" },
+          ],
+        },
+        {
+          type: "element",
+          tagName: "div",
+          properties: { className: ["imp-l"] },
+          children: [
+            {
+              type: "element",
+              tagName: "span",
+              properties: { className: ["pl-c1"] },
+              children: [{ type: "text", value: "2" }],
+            },
+            { type: "text", value: ";\n" },
           ],
         },
       ],

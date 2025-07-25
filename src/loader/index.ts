@@ -66,16 +66,6 @@ export interface LoadedCode {
    * The filename of the resource being highlighted.
    */
   filename: string;
-
-  /**
-   * Whether to include line numbers in the highlighted code.
-   *
-   * This is always `true`, and is included for convenience when passing the
-   * result to other parts of the system. The thinking is that you're more
-   * likely to want line numbers than not when the code being highlighted comes
-   * from an external file.
-   */
-  lineNumbers: true;
 }
 
 const schema: JSONSchema7 = {
@@ -148,7 +138,6 @@ const codeLoader: LoaderDefinitionFunction<CodeLoaderOptions> = function (
       tree,
       scope,
       filename: this.utils.contextify(this.rootContext, this.resourcePath),
-      lineNumbers: true,
     };
 
     return `export default ${JSON.stringify(result)};`;

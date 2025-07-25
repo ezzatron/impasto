@@ -1,10 +1,5 @@
 import type { Element, Root } from "hast";
-import {
-  createCoreTransform,
-  createHighlighter,
-  type LineNumberElement,
-  type LineNumbersElement,
-} from "impasto";
+import { createCoreTransform, createHighlighter } from "impasto";
 import common from "impasto/lang/common";
 import { expect, it } from "vitest";
 import { rootToHTML } from "../../hast.js";
@@ -15,20 +10,6 @@ const space: Element = {
   properties: { className: ["imp-s"] },
   children: [{ type: "text", value: " " }],
 };
-
-const lineNumber = (n: number): LineNumberElement => ({
-  type: "element",
-  tagName: "div",
-  properties: { className: ["imp-n"] },
-  children: [{ type: "text", value: String(n) }],
-});
-
-const lineNumbers = (n: number): LineNumbersElement => ({
-  type: "element",
-  tagName: "div",
-  properties: { className: ["imp-ln"] },
-  children: Array.from({ length: n }, (_, i) => lineNumber(i + 1)),
-});
 
 it("parses annotations", async () => {
   const highlighter = await createHighlighter(common);
@@ -67,97 +48,71 @@ it("strips annotations", async () => {
 
   expect(rootToHTML(tree)).toMatchInlineSnapshot(`
     "
-    <pre class="imp-cb">
-      <div class="imp-ln">
-        <div class="imp-n">1</div>
-        <div class="imp-n">2</div>
-      </div>
-      <code>
-        <div class="imp-l">
-          <span class="pl-c1">1</span>
-          <span class="imp-s"></span>
-          <span class="pl-c">//
-            <span class="imp-s"></span>extra
-            <span class="imp-s"></span>content
-          </span>
-        </div>
-        <div class="imp-l">
-          <span class="pl-c">//
-            <span class="imp-s"></span>normal
-            <span class="imp-s"></span>comment
-          </span>
-        </div>
-      </code>
-    </pre>
+    <div class="imp-l">
+      <span class="pl-c1">1</span>
+      <span class="imp-s"></span>
+      <span class="pl-c">//
+        <span class="imp-s"></span>extra
+        <span class="imp-s"></span>content
+      </span>
+    </div>
+    <div class="imp-l">
+      <span class="pl-c">//
+        <span class="imp-s"></span>normal
+        <span class="imp-s"></span>comment
+      </span>
+    </div>
     "
   `);
-  expect(tree).toEqual({
-    type: "root",
-    children: [
-      {
-        type: "element",
-        tagName: "pre",
-        properties: { className: ["imp-cb"] },
-        children: [
-          lineNumbers(2),
-          {
-            type: "element",
-            tagName: "code",
-            properties: {},
-            children: [
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-l"] },
-                children: [
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-c1"] },
-                    children: [{ type: "text", value: "1" }],
-                  },
-                  space,
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-c"] },
-                    children: [
-                      { type: "text", value: "//" },
-                      space,
-                      { type: "text", value: "extra" },
-                      space,
-                      { type: "text", value: "content" },
-                    ],
-                  },
-                  { type: "text", value: "\n" },
-                ],
-              },
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-l"] },
-                children: [
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-c"] },
-                    children: [
-                      { type: "text", value: "//" },
-                      space,
-                      { type: "text", value: "normal" },
-                      space,
-                      { type: "text", value: "comment" },
-                    ],
-                  },
-                  { type: "text", value: "\n" },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  });
+  expect(tree.children).toEqual([
+    {
+      type: "element",
+      tagName: "div",
+      properties: { className: ["imp-l"] },
+      children: [
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-c1"] },
+          children: [{ type: "text", value: "1" }],
+        },
+        space,
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-c"] },
+          children: [
+            { type: "text", value: "//" },
+            space,
+            { type: "text", value: "extra" },
+            space,
+            { type: "text", value: "content" },
+          ],
+        },
+        { type: "text", value: "\n" },
+      ],
+    },
+    {
+      type: "element",
+      tagName: "div",
+      properties: { className: ["imp-l"] },
+      children: [
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-c"] },
+          children: [
+            { type: "text", value: "//" },
+            space,
+            { type: "text", value: "normal" },
+            space,
+            { type: "text", value: "comment" },
+          ],
+        },
+        { type: "text", value: "\n" },
+      ],
+    },
+  ]);
 });
 
 it("doesn't strip annotations in retain mode", async () => {
@@ -171,61 +126,36 @@ it("doesn't strip annotations in retain mode", async () => {
   });
   expect(rootToHTML(tree)).toMatchInlineSnapshot(`
     "
-    <pre class="imp-cb">
-      <div class="imp-ln">
-        <div class="imp-n">1</div>
-      </div>
-      <code>
-        <div class="imp-l">
-          <span class="pl-c">//
-            <span class="imp-s"></span>[!name
-            <span class="imp-s"></span>value]
-          </span>
-        </div>
-      </code>
-    </pre>
+    <div class="imp-l">
+      <span class="pl-c">//
+        <span class="imp-s"></span>[!name
+        <span class="imp-s"></span>value]
+      </span>
+    </div>
     "
   `);
-  expect(tree).toEqual({
-    type: "root",
-    children: [
-      {
-        type: "element",
-        tagName: "pre",
-        properties: { className: ["imp-cb"] },
-        children: [
-          lineNumbers(1),
-          {
-            type: "element",
-            tagName: "code",
-            properties: {},
-            children: [
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-l"] },
-                children: [
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-c"] },
-                    children: [
-                      { type: "text", value: "//" },
-                      space,
-                      { type: "text", value: "[!name" },
-                      space,
-                      { type: "text", value: "value]" },
-                    ],
-                  },
-                  { type: "text", value: "\n" },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  });
+  expect(tree.children).toEqual([
+    {
+      type: "element",
+      tagName: "div",
+      properties: { className: ["imp-l"] },
+      children: [
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-c"] },
+          children: [
+            { type: "text", value: "//" },
+            space,
+            { type: "text", value: "[!name" },
+            space,
+            { type: "text", value: "value]" },
+          ],
+        },
+        { type: "text", value: "\n" },
+      ],
+    },
+  ]);
 });
 
 it("doesn't parse or strip annotations in ignore mode", async () => {
@@ -237,61 +167,36 @@ it("doesn't parse or strip annotations in ignore mode", async () => {
   expect(annotations).toEqual({});
   expect(rootToHTML(tree)).toMatchInlineSnapshot(`
     "
-    <pre class="imp-cb">
-      <div class="imp-ln">
-        <div class="imp-n">1</div>
-      </div>
-      <code>
-        <div class="imp-l">
-          <span class="pl-c">//
-            <span class="imp-s"></span>[!name
-            <span class="imp-s"></span>value]
-          </span>
-        </div>
-      </code>
-    </pre>
+    <div class="imp-l">
+      <span class="pl-c">//
+        <span class="imp-s"></span>[!name
+        <span class="imp-s"></span>value]
+      </span>
+    </div>
     "
   `);
-  expect(tree).toEqual({
-    type: "root",
-    children: [
-      {
-        type: "element",
-        tagName: "pre",
-        properties: { className: ["imp-cb"] },
-        children: [
-          lineNumbers(1),
-          {
-            type: "element",
-            tagName: "code",
-            properties: {},
-            children: [
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-l"] },
-                children: [
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-c"] },
-                    children: [
-                      { type: "text", value: "//" },
-                      space,
-                      { type: "text", value: "[!name" },
-                      space,
-                      { type: "text", value: "value]" },
-                    ],
-                  },
-                  { type: "text", value: "\n" },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  });
+  expect(tree.children).toEqual([
+    {
+      type: "element",
+      tagName: "div",
+      properties: { className: ["imp-l"] },
+      children: [
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-c"] },
+          children: [
+            { type: "text", value: "//" },
+            space,
+            { type: "text", value: "[!name" },
+            space,
+            { type: "text", value: "value]" },
+          ],
+        },
+        { type: "text", value: "\n" },
+      ],
+    },
+  ]);
 });
 
 it("ignores unknown comment syntaxes", () => {
@@ -311,61 +216,36 @@ it("ignores unknown comment syntaxes", () => {
 
   expect(rootToHTML(tree)).toMatchInlineSnapshot(`
     "
-    <pre class="imp-cb">
-      <div class="imp-ln">
-        <div class="imp-n">1</div>
-      </div>
-      <code>
-        <div class="imp-l">
-          <span class="pl-c">!!
-            <span class="imp-s"></span>[!name
-            <span class="imp-s"></span>value]
-          </span>
-        </div>
-      </code>
-    </pre>
+    <div class="imp-l">
+      <span class="pl-c">!!
+        <span class="imp-s"></span>[!name
+        <span class="imp-s"></span>value]
+      </span>
+    </div>
     "
   `);
-  expect(tree).toEqual({
-    type: "root",
-    children: [
-      {
-        type: "element",
-        tagName: "pre",
-        properties: { className: ["imp-cb"] },
-        children: [
-          lineNumbers(1),
-          {
-            type: "element",
-            tagName: "code",
-            properties: {},
-            children: [
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-l"] },
-                children: [
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-c"] },
-                    children: [
-                      { type: "text", value: "!!" },
-                      space,
-                      { type: "text", value: "[!name" },
-                      space,
-                      { type: "text", value: "value]" },
-                    ],
-                  },
-                  { type: "text", value: "\n" },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  });
+  expect(tree.children).toEqual([
+    {
+      type: "element",
+      tagName: "div",
+      properties: { className: ["imp-l"] },
+      children: [
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-c"] },
+          children: [
+            { type: "text", value: "!!" },
+            space,
+            { type: "text", value: "[!name" },
+            space,
+            { type: "text", value: "value]" },
+          ],
+        },
+        { type: "text", value: "\n" },
+      ],
+    },
+  ]);
 });
 
 it("handles source with no annotations", async () => {

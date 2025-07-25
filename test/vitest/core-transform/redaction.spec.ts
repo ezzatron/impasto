@@ -1,10 +1,5 @@
 import type { Element, Root } from "hast";
-import {
-  createCoreTransform,
-  createHighlighter,
-  type LineNumberElement,
-  type LineNumbersElement,
-} from "impasto";
+import { createCoreTransform, createHighlighter } from "impasto";
 import common from "impasto/lang/common";
 import { expect, it } from "vitest";
 import { rootToHTML } from "../../hast.js";
@@ -15,20 +10,6 @@ const space: Element = {
   properties: { className: ["imp-s"] },
   children: [{ type: "text", value: " " }],
 };
-
-const lineNumber = (n: number): LineNumberElement => ({
-  type: "element",
-  tagName: "div",
-  properties: { className: ["imp-n"] },
-  children: [{ type: "text", value: String(n) }],
-});
-
-const lineNumbers = (n: number): LineNumbersElement => ({
-  type: "element",
-  tagName: "div",
-  properties: { className: ["imp-ln"] },
-  children: Array.from({ length: n }, (_, i) => lineNumber(i + 1)),
-});
 
 it("redacts sensitive information", async () => {
   const highlighter = await createHighlighter(common);
@@ -51,174 +32,149 @@ it("redacts sensitive information", async () => {
 
   expect(rootToHTML(tree)).toMatchInlineSnapshot(`
     "
-    <pre class="imp-cb">
-      <div class="imp-ln">
-        <div class="imp-n">1</div>
-      </div>
-      <code>
-        <div class="imp-l">
-          <span class="pl-k">const</span>
-          <span class="imp-s"></span>
-          <span class="pl-c1">keys</span>
-          <span class="imp-s"></span>
-          <span class="pl-k">=</span>
-          <span class="imp-s"></span>
-          <span class="pl-s">
-            <span class="pl-pds">"</span>
-            <span class="imp-rd" data-imp-rd="api-key">REDACTED&#x3C;["key_test_a"]></span>
-            <span class="imp-s"></span>key_test_b
-            <span class="imp-s"></span>
-            <span class="imp-rd" data-imp-rd="api-key">REDACTED&#x3C;["key_prod_a","a"]></span>
-            <span class="imp-s"></span>
-            <span class="imp-rd" data-imp-rd="api-key">REDACTED&#x3C;["key_prod_b","b"]></span>
-            <span class="imp-s"></span>key_other
-            <span class="pl-pds">"</span>
-          </span>
-          <span class="imp-s"></span>
-          <span class="pl-c">//
-            <span class="imp-s"></span>
-            <span class="imp-rd" data-imp-rd="greeting"></span>
-          </span>
-        </div>
-      </code>
-    </pre>
+    <div class="imp-l">
+      <span class="pl-k">const</span>
+      <span class="imp-s"></span>
+      <span class="pl-c1">keys</span>
+      <span class="imp-s"></span>
+      <span class="pl-k">=</span>
+      <span class="imp-s"></span>
+      <span class="pl-s">
+        <span class="pl-pds">"</span>
+        <span class="imp-rd" data-imp-rd="api-key">REDACTED&#x3C;["key_test_a"]></span>
+        <span class="imp-s"></span>key_test_b
+        <span class="imp-s"></span>
+        <span class="imp-rd" data-imp-rd="api-key">REDACTED&#x3C;["key_prod_a","a"]></span>
+        <span class="imp-s"></span>
+        <span class="imp-rd" data-imp-rd="api-key">REDACTED&#x3C;["key_prod_b","b"]></span>
+        <span class="imp-s"></span>key_other
+        <span class="pl-pds">"</span>
+      </span>
+      <span class="imp-s"></span>
+      <span class="pl-c">//
+        <span class="imp-s"></span>
+        <span class="imp-rd" data-imp-rd="greeting"></span>
+      </span>
+    </div>
     "
   `);
-  expect(tree).toEqual({
-    type: "root",
-    children: [
-      {
-        type: "element",
-        tagName: "pre",
-        properties: { className: ["imp-cb"] },
-        children: [
-          lineNumbers(1),
-          {
-            type: "element",
-            tagName: "code",
-            properties: {},
-            children: [
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-l"] },
-                children: [
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-k"] },
-                    children: [{ type: "text", value: "const" }],
-                  },
-                  space,
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-c1"] },
-                    children: [{ type: "text", value: "keys" }],
-                  },
-                  space,
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-k"] },
-                    children: [{ type: "text", value: "=" }],
-                  },
-                  space,
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-s"] },
-                    children: [
-                      {
-                        type: "element",
-                        tagName: "span",
-                        properties: { className: ["pl-pds"] },
-                        children: [{ type: "text", value: '"' }],
-                      },
-                      {
-                        type: "element",
-                        tagName: "span",
-                        properties: {
-                          className: ["imp-rd"],
-                          "data-imp-rd": "api-key",
-                        },
-                        children: [
-                          {
-                            type: "text",
-                            value: 'REDACTED<["key_test_a"]>',
-                          },
-                        ],
-                      },
-                      space,
-                      { type: "text", value: "key_test_b" },
-                      space,
-                      {
-                        type: "element",
-                        tagName: "span",
-                        properties: {
-                          className: ["imp-rd"],
-                          "data-imp-rd": "api-key",
-                        },
-                        children: [
-                          {
-                            type: "text",
-                            value: 'REDACTED<["key_prod_a","a"]>',
-                          },
-                        ],
-                      },
-                      space,
-                      {
-                        type: "element",
-                        tagName: "span",
-                        properties: {
-                          className: ["imp-rd"],
-                          "data-imp-rd": "api-key",
-                        },
-                        children: [
-                          {
-                            type: "text",
-                            value: 'REDACTED<["key_prod_b","b"]>',
-                          },
-                        ],
-                      },
-                      space,
-                      { type: "text", value: "key_other" },
-                      {
-                        type: "element",
-                        tagName: "span",
-                        properties: { className: ["pl-pds"] },
-                        children: [{ type: "text", value: '"' }],
-                      },
-                    ],
-                  },
-                  space,
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-c"] },
-                    children: [
-                      { type: "text", value: "//" },
-                      space,
-                      {
-                        type: "element",
-                        tagName: "span",
-                        properties: {
-                          className: ["imp-rd"],
-                          "data-imp-rd": "greeting",
-                        },
-                        children: [],
-                      },
-                    ],
-                  },
-                  { type: "text", value: "\n" },
-                ],
+  expect(tree.children).toEqual([
+    {
+      type: "element",
+      tagName: "div",
+      properties: { className: ["imp-l"] },
+      children: [
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-k"] },
+          children: [{ type: "text", value: "const" }],
+        },
+        space,
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-c1"] },
+          children: [{ type: "text", value: "keys" }],
+        },
+        space,
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-k"] },
+          children: [{ type: "text", value: "=" }],
+        },
+        space,
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-s"] },
+          children: [
+            {
+              type: "element",
+              tagName: "span",
+              properties: { className: ["pl-pds"] },
+              children: [{ type: "text", value: '"' }],
+            },
+            {
+              type: "element",
+              tagName: "span",
+              properties: {
+                className: ["imp-rd"],
+                "data-imp-rd": "api-key",
               },
-            ],
-          },
-        ],
-      },
-    ],
-  });
+              children: [
+                {
+                  type: "text",
+                  value: 'REDACTED<["key_test_a"]>',
+                },
+              ],
+            },
+            space,
+            { type: "text", value: "key_test_b" },
+            space,
+            {
+              type: "element",
+              tagName: "span",
+              properties: {
+                className: ["imp-rd"],
+                "data-imp-rd": "api-key",
+              },
+              children: [
+                {
+                  type: "text",
+                  value: 'REDACTED<["key_prod_a","a"]>',
+                },
+              ],
+            },
+            space,
+            {
+              type: "element",
+              tagName: "span",
+              properties: {
+                className: ["imp-rd"],
+                "data-imp-rd": "api-key",
+              },
+              children: [
+                {
+                  type: "text",
+                  value: 'REDACTED<["key_prod_b","b"]>',
+                },
+              ],
+            },
+            space,
+            { type: "text", value: "key_other" },
+            {
+              type: "element",
+              tagName: "span",
+              properties: { className: ["pl-pds"] },
+              children: [{ type: "text", value: '"' }],
+            },
+          ],
+        },
+        space,
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-c"] },
+          children: [
+            { type: "text", value: "//" },
+            space,
+            {
+              type: "element",
+              tagName: "span",
+              properties: {
+                className: ["imp-rd"],
+                "data-imp-rd": "greeting",
+              },
+              children: [],
+            },
+          ],
+        },
+        { type: "text", value: "\n" },
+      ],
+    },
+  ]);
 });
 
 it("redacts sensitive information spread across adjacent text nodes", () => {
@@ -239,43 +195,32 @@ it("redacts sensitive information spread across adjacent text nodes", () => {
   });
   coreTransform(tree);
 
-  expect(tree).toEqual({
-    type: "root",
-    children: [
-      {
-        type: "element",
-        tagName: "pre",
-        properties: { className: ["imp-cb"] },
-        children: [
-          lineNumbers(1),
-          {
-            type: "element",
-            tagName: "code",
-            properties: {},
-            children: [
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-l"] },
-                children: [
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: {
-                      className: ["imp-rd"],
-                      "data-imp-rd": "api-key",
-                    },
-                    children: [{ type: "text", value: 'REDACTED<["key_a"]>' }],
-                  },
-                  { type: "text", value: "\n" },
-                ],
-              },
-            ],
+  expect(rootToHTML(tree)).toMatchInlineSnapshot(`
+    "
+    <div class="imp-l">
+      <span class="imp-rd" data-imp-rd="api-key">REDACTED&#x3C;["key_a"]></span>
+    </div>
+    "
+  `);
+  expect(tree.children).toEqual([
+    {
+      type: "element",
+      tagName: "div",
+      properties: { className: ["imp-l"] },
+      children: [
+        {
+          type: "element",
+          tagName: "span",
+          properties: {
+            className: ["imp-rd"],
+            "data-imp-rd": "api-key",
           },
-        ],
-      },
-    ],
-  });
+          children: [{ type: "text", value: 'REDACTED<["key_a"]>' }],
+        },
+        { type: "text", value: "\n" },
+      ],
+    },
+  ]);
 });
 
 it("can throw for extra sensitive information", async () => {

@@ -2,10 +2,7 @@ import type { Element, ElementContent, Root as HastRoot, Text } from "hast";
 import createClassList from "hast-util-class-list";
 import { visit } from "unist-util-visit";
 import {
-  codeBlock as codeBlockClass,
   line as lineClass,
-  lineNumber as lineNumberClass,
-  lineNumbers as lineNumbersClass,
   redaction as redactionClass,
   space as spaceClass,
   tab as tabClass,
@@ -141,8 +138,6 @@ export interface CoreTransformResult {
  * - Line splitting — Each line's content is wrapped with `<div class="imp-l">`
  * - Trimming/collapsing empty lines
  * - Trimming trailing whitespace from lines
- * - Line numbering - Line numbers are added as a `<div class="imp-ln">` element
- *   with `<div class="imp-n">` elements for each line number.
  * - Annotation parsing
  * - Section parsing
  * - Whitespace wrapping — Spaces are wrapped with `<span class="imp-s">`, and
@@ -177,22 +172,7 @@ export function createCoreTransform({
 
     wrapWhitespace(lines);
 
-    tree.children = [
-      {
-        type: "element",
-        tagName: "pre",
-        properties: { className: [codeBlockClass] },
-        children: [
-          createLineNumbers(lines.length),
-          {
-            type: "element",
-            tagName: "code",
-            properties: {},
-            children: lines,
-          },
-        ],
-      },
-    ];
+    tree.children = lines;
 
     return { annotations, tree: tree as ImpastoRoot };
   };
@@ -562,26 +542,6 @@ function trimSectionLines(lines: Element[]): void {
       line.properties[sectionNameAttr] = Array.from(lineSections).join(" ");
     }
   }
-}
-
-function createLineNumbers(count: number): Element {
-  const numbers: Element = {
-    type: "element",
-    tagName: "div",
-    properties: { className: [lineNumbersClass] },
-    children: [],
-  };
-
-  for (let i = 0; i < count; ++i) {
-    numbers.children.push({
-      type: "element",
-      tagName: "div",
-      properties: { className: [lineNumberClass] },
-      children: [{ type: "text", value: String(i + 1) }],
-    });
-  }
-
-  return numbers;
 }
 
 function collapseTextNodes(lines: Element[]): void {

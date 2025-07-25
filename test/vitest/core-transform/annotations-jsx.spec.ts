@@ -1,10 +1,5 @@
 import type { Element, Root } from "hast";
-import {
-  createCoreTransform,
-  createHighlighter,
-  type LineNumberElement,
-  type LineNumbersElement,
-} from "impasto";
+import { createCoreTransform, createHighlighter } from "impasto";
 import common from "impasto/lang/common";
 import { expect, it } from "vitest";
 import { rootToHTML } from "../../hast.js";
@@ -15,20 +10,6 @@ const space: Element = {
   properties: { className: ["imp-s"] },
   children: [{ type: "text", value: " " }],
 };
-
-const lineNumber = (n: number): LineNumberElement => ({
-  type: "element",
-  tagName: "div",
-  properties: { className: ["imp-n"] },
-  children: [{ type: "text", value: String(n) }],
-});
-
-const lineNumbers = (n: number): LineNumbersElement => ({
-  type: "element",
-  tagName: "div",
-  properties: { className: ["imp-ln"] },
-  children: Array.from({ length: n }, (_, i) => lineNumber(i + 1)),
-});
 
 it("strips JSX annotations", async () => {
   const highlighter = await createHighlighter(common);
@@ -47,160 +28,132 @@ a {/* [!name-b value b] extra content */}
 
   expect(rootToHTML(tree)).toMatchInlineSnapshot(`
     "
-    <pre class="imp-cb">
-      <div class="imp-ln">
-        <div class="imp-n">1</div>
-        <div class="imp-n">2</div>
-        <div class="imp-n">3</div>
-        <div class="imp-n">4</div>
-      </div>
-      <code>
-        <div class="imp-l">&#x3C;
-          <span class="pl-ent">div</span>>
-        </div>
-        <div class="imp-l">a
-          <span class="imp-s"></span>
-          <span class="pl-pse">{</span>
-          <span class="pl-c">/*
-            <span class="imp-s"></span>extra
-            <span class="imp-s"></span>content*/
-          </span>
-          <span class="pl-pse">}</span>
-        </div>
-        <div class="imp-l">
-          <span class="pl-pse">{</span>
-          <span class="pl-c">/*
-            <span class="imp-s"></span>normal
-            <span class="imp-s"></span>comment
-            <span class="imp-s"></span>*/
-          </span>
-          <span class="pl-pse">}</span>
-        </div>
-        <div class="imp-l">&#x3C;/
-          <span class="pl-ent">div</span>>
-        </div>
-      </code>
-    </pre>
+    <div class="imp-l">&#x3C;
+      <span class="pl-ent">div</span>>
+    </div>
+    <div class="imp-l">a
+      <span class="imp-s"></span>
+      <span class="pl-pse">{</span>
+      <span class="pl-c">/*
+        <span class="imp-s"></span>extra
+        <span class="imp-s"></span>content*/
+      </span>
+      <span class="pl-pse">}</span>
+    </div>
+    <div class="imp-l">
+      <span class="pl-pse">{</span>
+      <span class="pl-c">/*
+        <span class="imp-s"></span>normal
+        <span class="imp-s"></span>comment
+        <span class="imp-s"></span>*/
+      </span>
+      <span class="pl-pse">}</span>
+    </div>
+    <div class="imp-l">&#x3C;/
+      <span class="pl-ent">div</span>>
+    </div>
     "
   `);
-  expect(tree).toEqual({
-    type: "root",
-    children: [
-      {
-        type: "element",
-        tagName: "pre",
-        properties: { className: ["imp-cb"] },
-        children: [
-          lineNumbers(4),
-          {
-            type: "element",
-            tagName: "code",
-            properties: {},
-            children: [
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-l"] },
-                children: [
-                  { type: "text", value: "<" },
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-ent"] },
-                    children: [{ type: "text", value: "div" }],
-                  },
-                  { type: "text", value: ">\n" },
-                ],
-              },
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-l"] },
-                children: [
-                  { type: "text", value: "a" },
-                  space,
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-pse"] },
-                    children: [{ type: "text", value: "{" }],
-                  },
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-c"] },
-                    children: [
-                      { type: "text", value: "/*" },
-                      space,
-                      { type: "text", value: "extra" },
-                      space,
-                      { type: "text", value: "content*/" },
-                    ],
-                  },
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-pse"] },
-                    children: [{ type: "text", value: "}" }],
-                  },
-                  { type: "text", value: "\n" },
-                ],
-              },
-              {
-                properties: { className: ["imp-l"] },
-                tagName: "div",
-                type: "element",
-                children: [
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-pse"] },
-                    children: [{ type: "text", value: "{" }],
-                  },
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-c"] },
-                    children: [
-                      { type: "text", value: "/*" },
-                      space,
-                      { type: "text", value: "normal" },
-                      space,
-                      { type: "text", value: "comment" },
-                      space,
-                      { type: "text", value: "*/" },
-                    ],
-                  },
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-pse"] },
-                    children: [{ type: "text", value: "}" }],
-                  },
-                  { type: "text", value: "\n" },
-                ],
-              },
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-l"] },
-                children: [
-                  { type: "text", value: "</" },
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-ent"] },
-                    children: [{ type: "text", value: "div" }],
-                  },
-                  { type: "text", value: ">\n" },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  });
+  expect(tree.children).toEqual([
+    {
+      type: "element",
+      tagName: "div",
+      properties: { className: ["imp-l"] },
+      children: [
+        { type: "text", value: "<" },
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-ent"] },
+          children: [{ type: "text", value: "div" }],
+        },
+        { type: "text", value: ">\n" },
+      ],
+    },
+    {
+      type: "element",
+      tagName: "div",
+      properties: { className: ["imp-l"] },
+      children: [
+        { type: "text", value: "a" },
+        space,
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-pse"] },
+          children: [{ type: "text", value: "{" }],
+        },
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-c"] },
+          children: [
+            { type: "text", value: "/*" },
+            space,
+            { type: "text", value: "extra" },
+            space,
+            { type: "text", value: "content*/" },
+          ],
+        },
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-pse"] },
+          children: [{ type: "text", value: "}" }],
+        },
+        { type: "text", value: "\n" },
+      ],
+    },
+    {
+      properties: { className: ["imp-l"] },
+      tagName: "div",
+      type: "element",
+      children: [
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-pse"] },
+          children: [{ type: "text", value: "{" }],
+        },
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-c"] },
+          children: [
+            { type: "text", value: "/*" },
+            space,
+            { type: "text", value: "normal" },
+            space,
+            { type: "text", value: "comment" },
+            space,
+            { type: "text", value: "*/" },
+          ],
+        },
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-pse"] },
+          children: [{ type: "text", value: "}" }],
+        },
+        { type: "text", value: "\n" },
+      ],
+    },
+    {
+      type: "element",
+      tagName: "div",
+      properties: { className: ["imp-l"] },
+      children: [
+        { type: "text", value: "</" },
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-ent"] },
+          children: [{ type: "text", value: "div" }],
+        },
+        { type: "text", value: ">\n" },
+      ],
+    },
+  ]);
 });
 
 it("doesn't strip surrounding nodes that are similar to JSX annotations", () => {
@@ -319,159 +272,134 @@ it("doesn't strip surrounding nodes that are similar to JSX annotations", () => 
 
   expect(rootToHTML(tree)).toMatchInlineSnapshot(`
     "
-    <pre class="imp-cb">
-      <div class="imp-ln">
-        <div class="imp-n">1</div>
-      </div>
-      <code>
-        <div class="imp-l">a
-          <div class="">}</div>
-          <div></div>
-          <div class="">}</div>
-          <div><!--a--></div>
-          <div class="">}</div>
-          <div class="">a</div>
-          <div class="">}</div>
-          <div class="">{</div>a
-          <div class="">{</div>
-          <div></div>
-          <div class="">{</div>
-          <div><!--a--></div>
-          <div class="">{</div>
-          <div class="">a</div>
-        </div>
-      </code>
-    </pre>
+    <div class="imp-l">a
+      <div class="">}</div>
+      <div></div>
+      <div class="">}</div>
+      <div><!--a--></div>
+      <div class="">}</div>
+      <div class="">a</div>
+      <div class="">}</div>
+      <div class="">{</div>a
+      <div class="">{</div>
+      <div></div>
+      <div class="">{</div>
+      <div><!--a--></div>
+      <div class="">{</div>
+      <div class="">a</div>
+    </div>
     "
   `);
-  expect(tree).toEqual({
-    type: "root",
-    children: [
-      {
-        type: "element",
-        tagName: "pre",
-        properties: { className: ["imp-cb"] },
-        children: [
-          lineNumbers(1),
-          {
-            type: "element",
-            tagName: "code",
-            properties: {},
-            children: [
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-l"] },
-                children: [
-                  // previous sibling isn't an element
-                  { type: "text", value: "a" },
-                  {
-                    type: "element",
-                    tagName: "div",
-                    properties: expect.objectContaining({}),
-                    children: [{ type: "text", value: "}" }],
-                  },
+  expect(tree.children).toEqual([
+    {
+      type: "element",
+      tagName: "div",
+      properties: { className: ["imp-l"] },
+      children: [
+        // previous sibling isn't an element
+        { type: "text", value: "a" },
+        {
+          type: "element",
+          tagName: "div",
+          properties: expect.objectContaining({}),
+          children: [{ type: "text", value: "}" }],
+        },
 
-                  // previous sibling doesn't have 1 child
-                  {
-                    type: "element",
-                    tagName: "div",
-                    properties: expect.objectContaining({}),
-                    children: [],
-                  },
-                  {
-                    type: "element",
-                    tagName: "div",
-                    properties: expect.objectContaining({}),
-                    children: [{ type: "text", value: "}" }],
-                  },
+        // previous sibling doesn't have 1 child
+        {
+          type: "element",
+          tagName: "div",
+          properties: expect.objectContaining({}),
+          children: [],
+        },
+        {
+          type: "element",
+          tagName: "div",
+          properties: expect.objectContaining({}),
+          children: [{ type: "text", value: "}" }],
+        },
 
-                  // previous sibling child isn't text
-                  {
-                    type: "element",
-                    tagName: "div",
-                    properties: expect.objectContaining({}),
-                    children: [{ type: "comment", value: "a" }],
-                  },
-                  {
-                    type: "element",
-                    tagName: "div",
-                    properties: expect.objectContaining({}),
-                    children: [{ type: "text", value: "}" }],
-                  },
+        // previous sibling child isn't text
+        {
+          type: "element",
+          tagName: "div",
+          properties: expect.objectContaining({}),
+          children: [{ type: "comment", value: "a" }],
+        },
+        {
+          type: "element",
+          tagName: "div",
+          properties: expect.objectContaining({}),
+          children: [{ type: "text", value: "}" }],
+        },
 
-                  // previous sibling text isn't an open brace
-                  {
-                    type: "element",
-                    tagName: "div",
-                    properties: expect.objectContaining({}),
-                    children: [{ type: "text", value: "a" }],
-                  },
-                  {
-                    type: "element",
-                    tagName: "div",
-                    properties: expect.objectContaining({}),
-                    children: [{ type: "text", value: "}" }],
-                  },
+        // previous sibling text isn't an open brace
+        {
+          type: "element",
+          tagName: "div",
+          properties: expect.objectContaining({}),
+          children: [{ type: "text", value: "a" }],
+        },
+        {
+          type: "element",
+          tagName: "div",
+          properties: expect.objectContaining({}),
+          children: [{ type: "text", value: "}" }],
+        },
 
-                  // next sibling isn't an element
-                  {
-                    type: "element",
-                    tagName: "div",
-                    properties: expect.objectContaining({}),
-                    children: [{ type: "text", value: "{" }],
-                  },
-                  { type: "text", value: "a" },
+        // next sibling isn't an element
+        {
+          type: "element",
+          tagName: "div",
+          properties: expect.objectContaining({}),
+          children: [{ type: "text", value: "{" }],
+        },
+        { type: "text", value: "a" },
 
-                  // next sibling doesn't have 1 child
-                  {
-                    type: "element",
-                    tagName: "div",
-                    properties: expect.objectContaining({}),
-                    children: [{ type: "text", value: "{" }],
-                  },
-                  {
-                    type: "element",
-                    tagName: "div",
-                    properties: expect.objectContaining({}),
-                    children: [],
-                  },
+        // next sibling doesn't have 1 child
+        {
+          type: "element",
+          tagName: "div",
+          properties: expect.objectContaining({}),
+          children: [{ type: "text", value: "{" }],
+        },
+        {
+          type: "element",
+          tagName: "div",
+          properties: expect.objectContaining({}),
+          children: [],
+        },
 
-                  // next sibling child isn't text
-                  {
-                    type: "element",
-                    tagName: "div",
-                    properties: expect.objectContaining({}),
-                    children: [{ type: "text", value: "{" }],
-                  },
-                  {
-                    type: "element",
-                    tagName: "div",
-                    properties: expect.objectContaining({}),
-                    children: [{ type: "comment", value: "a" }],
-                  },
+        // next sibling child isn't text
+        {
+          type: "element",
+          tagName: "div",
+          properties: expect.objectContaining({}),
+          children: [{ type: "text", value: "{" }],
+        },
+        {
+          type: "element",
+          tagName: "div",
+          properties: expect.objectContaining({}),
+          children: [{ type: "comment", value: "a" }],
+        },
 
-                  // next sibling text isn't a closing brace
-                  {
-                    type: "element",
-                    tagName: "div",
-                    properties: expect.objectContaining({}),
-                    children: [{ type: "text", value: "{" }],
-                  },
-                  {
-                    type: "element",
-                    tagName: "div",
-                    properties: expect.objectContaining({}),
-                    children: [{ type: "text", value: "a" }],
-                  },
+        // next sibling text isn't a closing brace
+        {
+          type: "element",
+          tagName: "div",
+          properties: expect.objectContaining({}),
+          children: [{ type: "text", value: "{" }],
+        },
+        {
+          type: "element",
+          tagName: "div",
+          properties: expect.objectContaining({}),
+          children: [{ type: "text", value: "a" }],
+        },
 
-                  { type: "text", value: "\n" },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  });
+        { type: "text", value: "\n" },
+      ],
+    },
+  ]);
 });

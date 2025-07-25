@@ -12,88 +12,44 @@ it("splits lines terminated with newlines", async () => {
 
   expect(rootToHTML(tree)).toMatchInlineSnapshot(`
     "
-    <pre class="imp-cb">
-      <div class="imp-ln">
-        <div class="imp-n">1</div>
-        <div class="imp-n">2</div>
-      </div>
-      <code>
-        <div class="imp-l">
-          <span class="pl-c1">1</span>
-        </div>
-        <div class="imp-l">
-          <span class="pl-c1">2</span>
-        </div>
-      </code>
-    </pre>
+    <div class="imp-l">
+      <span class="pl-c1">1</span>
+    </div>
+    <div class="imp-l">
+      <span class="pl-c1">2</span>
+    </div>
     "
   `);
-  expect(tree).toEqual({
-    type: "root",
-    children: [
-      {
-        type: "element",
-        tagName: "pre",
-        properties: { className: ["imp-cb"] },
-        children: [
-          {
-            type: "element",
-            tagName: "div",
-            properties: { className: ["imp-ln"] },
-            children: [
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-n"] },
-                children: [{ type: "text", value: "1" }],
-              },
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-n"] },
-                children: [{ type: "text", value: "2" }],
-              },
-            ],
-          },
-          {
-            type: "element",
-            tagName: "code",
-            properties: {},
-            children: [
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-l"] },
-                children: [
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-c1"] },
-                    children: [{ type: "text", value: "1" }],
-                  },
-                  { type: "text", value: "\n" },
-                ],
-              },
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-l"] },
-                children: [
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-c1"] },
-                    children: [{ type: "text", value: "2" }],
-                  },
-                  { type: "text", value: "\n" },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  });
+  expect(tree.children).toEqual([
+    {
+      type: "element",
+      tagName: "div",
+      properties: { className: ["imp-l"] },
+      children: [
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-c1"] },
+          children: [{ type: "text", value: "1" }],
+        },
+        { type: "text", value: "\n" },
+      ],
+    },
+    {
+      type: "element",
+      tagName: "div",
+      properties: { className: ["imp-l"] },
+      children: [
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-c1"] },
+          children: [{ type: "text", value: "2" }],
+        },
+        { type: "text", value: "\n" },
+      ],
+    },
+  ]);
 });
 
 it("handles missing terminal newlines", async () => {
@@ -104,88 +60,44 @@ it("handles missing terminal newlines", async () => {
 
   expect(rootToHTML(tree)).toMatchInlineSnapshot(`
     "
-    <pre class="imp-cb">
-      <div class="imp-ln">
-        <div class="imp-n">1</div>
-        <div class="imp-n">2</div>
-      </div>
-      <code>
-        <div class="imp-l">
-          <span class="pl-c1">1</span>
-        </div>
-        <div class="imp-l">
-          <span class="pl-c1">2</span>
-        </div>
-      </code>
-    </pre>
+    <div class="imp-l">
+      <span class="pl-c1">1</span>
+    </div>
+    <div class="imp-l">
+      <span class="pl-c1">2</span>
+    </div>
     "
   `);
-  expect(tree).toEqual({
-    type: "root",
-    children: [
-      {
-        type: "element",
-        tagName: "pre",
-        properties: { className: ["imp-cb"] },
-        children: [
-          {
-            type: "element",
-            tagName: "div",
-            properties: { className: ["imp-ln"] },
-            children: [
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-n"] },
-                children: [{ type: "text", value: "1" }],
-              },
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-n"] },
-                children: [{ type: "text", value: "2" }],
-              },
-            ],
-          },
-          {
-            type: "element",
-            tagName: "code",
-            properties: {},
-            children: [
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-l"] },
-                children: [
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-c1"] },
-                    children: [{ type: "text", value: "1" }],
-                  },
-                  { type: "text", value: "\n" },
-                ],
-              },
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-l"] },
-                children: [
-                  {
-                    type: "element",
-                    tagName: "span",
-                    properties: { className: ["pl-c1"] },
-                    children: [{ type: "text", value: "2" }],
-                  },
-                  { type: "text", value: "\n" },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  });
+  expect(tree.children).toEqual([
+    {
+      type: "element",
+      tagName: "div",
+      properties: { className: ["imp-l"] },
+      children: [
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-c1"] },
+          children: [{ type: "text", value: "1" }],
+        },
+        { type: "text", value: "\n" },
+      ],
+    },
+    {
+      type: "element",
+      tagName: "div",
+      properties: { className: ["imp-l"] },
+      children: [
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-c1"] },
+          children: [{ type: "text", value: "2" }],
+        },
+        { type: "text", value: "\n" },
+      ],
+    },
+  ]);
 });
 
 it("handles text nodes with interspersed newlines", async () => {
@@ -206,82 +118,31 @@ b
 
   expect(rootToHTML(tree)).toMatchInlineSnapshot(`
     "
-    <pre class="imp-cb">
-      <div class="imp-ln">
-        <div class="imp-n">1</div>
-        <div class="imp-n">2</div>
-        <div class="imp-n">3</div>
-      </div>
-      <code>
-        <div class="imp-l">a</div>
-        <div class="imp-l"></div>
-        <div class="imp-l">b</div>
-      </code>
-    </pre>
+    <div class="imp-l">a</div>
+    <div class="imp-l"></div>
+    <div class="imp-l">b</div>
     "
   `);
-  expect(tree).toEqual({
-    type: "root",
-    children: [
-      {
-        type: "element",
-        tagName: "pre",
-        properties: { className: ["imp-cb"] },
-        children: [
-          {
-            type: "element",
-            tagName: "div",
-            properties: { className: ["imp-ln"] },
-            children: [
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-n"] },
-                children: [{ type: "text", value: "1" }],
-              },
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-n"] },
-                children: [{ type: "text", value: "2" }],
-              },
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-n"] },
-                children: [{ type: "text", value: "3" }],
-              },
-            ],
-          },
-          {
-            type: "element",
-            tagName: "code",
-            properties: {},
-            children: [
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-l"] },
-                children: [{ type: "text", value: "a\n" }],
-              },
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-l"] },
-                children: [{ type: "text", value: "\n" }],
-              },
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-l"] },
-                children: [{ type: "text", value: "b\n" }],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  });
+  expect(tree.children).toEqual([
+    {
+      type: "element",
+      tagName: "div",
+      properties: { className: ["imp-l"] },
+      children: [{ type: "text", value: "a\n" }],
+    },
+    {
+      type: "element",
+      tagName: "div",
+      properties: { className: ["imp-l"] },
+      children: [{ type: "text", value: "\n" }],
+    },
+    {
+      type: "element",
+      tagName: "div",
+      properties: { className: ["imp-l"] },
+      children: [{ type: "text", value: "b\n" }],
+    },
+  ]);
 });
 
 it("ignores unexpected node types", () => {
@@ -298,52 +159,15 @@ it("ignores unexpected node types", () => {
 
   expect(rootToHTML(tree)).toMatchInlineSnapshot(`
     "
-    <pre class="imp-cb">
-      <div class="imp-ln">
-        <div class="imp-n">1</div>
-      </div>
-      <code>
-        <div class="imp-l">a</div>
-      </code>
-    </pre>
+    <div class="imp-l">a</div>
     "
   `);
-  expect(tree).toEqual({
-    type: "root",
-    children: [
-      {
-        type: "element",
-        tagName: "pre",
-        properties: { className: ["imp-cb"] },
-        children: [
-          {
-            type: "element",
-            tagName: "div",
-            properties: { className: ["imp-ln"] },
-            children: [
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-n"] },
-                children: [{ type: "text", value: "1" }],
-              },
-            ],
-          },
-          {
-            type: "element",
-            tagName: "code",
-            properties: {},
-            children: [
-              {
-                type: "element",
-                tagName: "div",
-                properties: { className: ["imp-l"] },
-                children: [{ type: "text", value: "a\n" }],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  });
+  expect(tree.children).toEqual([
+    {
+      type: "element",
+      tagName: "div",
+      properties: { className: ["imp-l"] },
+      children: [{ type: "text", value: "a\n" }],
+    },
+  ]);
 });
