@@ -10,6 +10,10 @@ Versioning].
 
 ## Unreleased
 
+## [v0.10.0] - 2025-07-25
+
+[v0.10.0]: https://github.com/ezzatron/impasto/releases/tag/v0.10.0
+
 ### Changed
 
 - **\[BREAKING]** The `filename` property of `LoadedCode` was renamed to
