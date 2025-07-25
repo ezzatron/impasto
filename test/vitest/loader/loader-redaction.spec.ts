@@ -46,7 +46,7 @@ it("supports redaction", async () => {
   const result = await compile(compiler);
 
   expect(result).toEqual({
-    filename: "./fixture/redaction/entry.js",
+    filePath: "./fixture/redaction/entry.js",
     scope: "source.js",
     tree: {
       type: "root",
@@ -144,7 +144,7 @@ it("supports redaction with no replace value", async () => {
   const result = await compile(compiler);
 
   expect(result).toEqual({
-    filename: "./fixture/redaction/entry.js",
+    filePath: "./fixture/redaction/entry.js",
     scope: "source.js",
     tree: {
       type: "root",

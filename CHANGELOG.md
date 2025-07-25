@@ -10,6 +10,11 @@ Versioning].
 
 ## Unreleased
 
+### Changed
+
+- **\[BREAKING]** The `filename` property of `LoadedCode` was renamed to
+  `filePath`.
+
 ## [v0.9.1] - 2025-07-25
 
 [v0.9.1]: https://github.com/ezzatron/impasto/releases/tag/v0.9.1

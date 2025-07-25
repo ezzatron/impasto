@@ -63,9 +63,9 @@ export interface LoadedCode {
   scope: string | undefined;
 
   /**
-   * The filename of the resource being highlighted.
+   * The file path of the resource being highlighted.
    */
-  filename: string;
+  filePath: string;
 }
 
 const schema: JSONSchema7 = {
@@ -137,7 +137,7 @@ const codeLoader: LoaderDefinitionFunction<CodeLoaderOptions> = function (
     const result: LoadedCode = {
       tree,
       scope,
-      filename: this.utils.contextify(this.rootContext, this.resourcePath),
+      filePath: this.utils.contextify(this.rootContext, this.resourcePath),
     };
 
     return `export default ${JSON.stringify(result)};`;

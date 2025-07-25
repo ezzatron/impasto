@@ -52,7 +52,7 @@ it("loads code", async () => {
     "
   `);
   expect(result).toEqual({
-    filename: "./fixture/basic/entry.js",
+    filePath: "./fixture/basic/entry.js",
     scope: "source.js",
     tree: {
       type: "root",
@@ -129,7 +129,7 @@ it("supports the strip annotation mode", async () => {
     "
   `);
   expect(result).toEqual({
-    filename: "./fixture/basic/entry.js",
+    filePath: "./fixture/basic/entry.js",
     scope: "source.js",
     tree: {
       type: "root",
@@ -211,7 +211,7 @@ it("supports the retain annotation mode", async () => {
     "
   `);
   expect(result).toEqual({
-    filename: "./fixture/basic/entry.js",
+    filePath: "./fixture/basic/entry.js",
     scope: "source.js",
     tree: {
       type: "root",
@@ -307,7 +307,7 @@ it("supports the ignore annotation mode", async () => {
     "
   `);
   expect(result).toEqual({
-    filename: "./fixture/basic/entry.js",
+    filePath: "./fixture/basic/entry.js",
     scope: "source.js",
     tree: {
       type: "root",
