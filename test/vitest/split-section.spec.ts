@@ -326,6 +326,31 @@ ${s}${s}${t}2 // [!section-end section-a]
   ]);
 });
 
+it("treats all lines as content if the section name is undefined", async () => {
+  const highlighter = await createHighlighter(common);
+  const tree = highlighter.highlight(
+    `
+1 // [!section-start section-a]
+2 // [!section-end section-a]
+    `,
+    "source.js",
+  );
+  const coreTransform = createCoreTransform();
+  const { tree: coreTree } = coreTransform(tree);
+  const result = splitSection(coreTree.children, undefined);
+
+  expect(result).toEqual({
+    content: {
+      lines: coreTree.children,
+      startLine: 1,
+      endLine: 2,
+    },
+    contentIndent: { indent: "", spaceCount: 0, tabCount: 0 },
+    contextBefore: undefined,
+    contextAfter: undefined,
+  });
+});
+
 it("throws if the section is not found", async () => {
   const highlighter = await createHighlighter(common);
   const tree = highlighter.highlight("1", "source.js");

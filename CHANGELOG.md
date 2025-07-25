@@ -10,6 +10,11 @@ Versioning].
 
 ## Unreleased
 
+### Changed
+
+- The `splitSection` function now accepts a falsy section name, which indicates
+  that all lines are part of the content.
+
 ## [v0.9.0] - 2025-07-25
 
 [v0.9.0]: https://github.com/ezzatron/impasto/releases/tag/v0.9.0

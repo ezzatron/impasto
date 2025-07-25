@@ -81,13 +81,23 @@ export interface SplitSectionResultContentIndent {
  * Splits code lines into a section and its context.
  *
  * @param lines - The original lines of code.
- * @param section - The name of the section to isolate.
+ * @param section - The name of the section to isolate. If falsy, all lines are
+ *   considered part of the content.
  */
 export function splitSection(
   lines: LineElement[],
-  section: string,
+  section: string | undefined,
 ): SplitSectionResult {
   lines = structuredClone(lines);
+
+  if (!section) {
+    return {
+      content: { lines, startLine: 1, endLine: lines.length },
+      contentIndent: { indent: "", spaceCount: 0, tabCount: 0 },
+      contextBefore: undefined,
+      contextAfter: undefined,
+    };
+  }
 
   const contentLines: LineElement[] = [];
   const linesBefore: LineElement[] = [];
