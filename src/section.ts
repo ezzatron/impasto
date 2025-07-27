@@ -30,6 +30,11 @@ export interface SplitSectionResult {
    * The lines after the section.
    */
   contextAfter: SplitSectionResultSegment | undefined;
+
+  /**
+   * All content and context lines combined.
+   */
+  lines: LineElement[];
 }
 
 /**
@@ -96,6 +101,7 @@ export function splitSection(
       contentIndent: { indent: "", spaceCount: 0, tabCount: 0 },
       contextBefore: undefined,
       contextAfter: undefined,
+      lines,
     };
   }
 
@@ -157,6 +163,7 @@ export function splitSection(
     contentIndent,
     contextBefore,
     contextAfter,
+    lines,
   };
 }
 

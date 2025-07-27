@@ -10,6 +10,11 @@ Versioning].
 
 ## Unreleased
 
+### Added
+
+- The `splitSection` function now returns a `lines` property that combines all
+  content and context lines.
+
 ## [v0.10.0] - 2025-07-25
 
 [v0.10.0]: https://github.com/ezzatron/impasto/releases/tag/v0.10.0

@@ -52,6 +52,11 @@ ${t}${s}${s}4 // [!section-end section-b]
     children: result.contextAfter?.lines ?? [],
   };
 
+  expect(result.lines).toEqual([
+    ...(result.contextBefore?.lines ?? []),
+    ...result.content.lines,
+    ...(result.contextAfter?.lines ?? []),
+  ]);
   expect(rootToHTML(contextBeforeTree)).toMatchInlineSnapshot(`
     "
     <div class="imp-l imp-sx" data-imp-s="section-a">
@@ -248,6 +253,7 @@ it("handles sections that span all lines", async () => {
     contentIndent: { indent: "", spaceCount: 0, tabCount: 0 },
     contextBefore: undefined,
     contextAfter: undefined,
+    lines: expect.arrayContaining([]),
   });
 });
 
@@ -348,6 +354,7 @@ it("treats all lines as content if the section name is undefined", async () => {
     contentIndent: { indent: "", spaceCount: 0, tabCount: 0 },
     contextBefore: undefined,
     contextAfter: undefined,
+    lines: coreTree.children,
   });
 });
 
