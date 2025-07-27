@@ -10,6 +10,10 @@ Versioning].
 
 ## Unreleased
 
+## [v0.11.0] - 2025-07-27
+
+[v0.11.0]: https://github.com/ezzatron/impasto/releases/tag/v0.11.0
+
 ### Added
 
 - The `splitSection` function now returns a `lines` property that combines all
