@@ -255,7 +255,7 @@ function cleanupLines(
         } else {
           wasCommentRemoved = true;
 
-          if (isJSXComment(line.children[j - 1], line.children[j + 1])) {
+          if (isJSXMDXComment(line.children[j - 1], line.children[j + 1])) {
             line.children.splice(j - 1, 3);
             j -= 2; // account for the two additional elements that were removed
           } else {
@@ -435,7 +435,7 @@ function getCommentText(node: ElementContent): Text | undefined {
   return createClassList(node).contains("pl-c") ? text : undefined;
 }
 
-function isJSXComment(
+function isJSXMDXComment(
   prevSibling: ElementContent | undefined,
   nextSibling: ElementContent | undefined,
 ): boolean {
@@ -453,10 +453,7 @@ function isJSXComment(
   if (prevText.value !== "{") return false;
   if (nextText.value !== "}") return false;
 
-  return (
-    createClassList(prevSibling).contains("pl-pse") &&
-    createClassList(nextSibling).contains("pl-pse")
-  );
+  return true;
 }
 
 function addSections(

@@ -1,5 +1,6 @@
 import type { Element, Root } from "hast";
 import { createCoreTransform, createHighlighter } from "impasto";
+import all from "impasto/lang/all";
 import common from "impasto/lang/common";
 import { expect, it } from "vitest";
 import { rootToHTML } from "../../hast.js";
@@ -151,6 +152,114 @@ a {/* [!name-b value b] extra content */}
           children: [{ type: "text", value: "div" }],
         },
         { type: "text", value: ">\n" },
+      ],
+    },
+  ]);
+});
+
+it("strips MDX annotations", async () => {
+  const highlighter = await createHighlighter(all);
+  const tree = highlighter.highlight(
+    `
+{/* [!name-a value a] */}
+a {/* [!name-b value b] extra content */}
+{/* normal comment */}
+{/* [!name-c value c] [!name-d value d] */}
+`,
+    "source.mdx",
+  );
+  const coreTransform = createCoreTransform();
+  coreTransform(tree);
+
+  expect(rootToHTML(tree)).toMatchInlineSnapshot(`
+    "
+    <div class="imp-l">a
+      <span class="imp-s"></span>
+      <span class="pl-s">{</span>
+      <span class="pl-c">/*
+        <span class="imp-s"></span>extra
+        <span class="imp-s"></span>content*/
+      </span>
+      <span class="pl-s">}</span>
+    </div>
+    <div class="imp-l">
+      <span class="pl-s">{</span>
+      <span class="pl-c">/*
+        <span class="imp-s"></span>normal
+        <span class="imp-s"></span>comment
+        <span class="imp-s"></span>*/
+      </span>
+      <span class="pl-s">}</span>
+    </div>
+    "
+  `);
+  expect(tree.children).toEqual([
+    {
+      type: "element",
+      tagName: "div",
+      properties: { className: ["imp-l"] },
+      children: [
+        { type: "text", value: "a" },
+        space,
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-s"] },
+          children: [{ type: "text", value: "{" }],
+        },
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-c"] },
+          children: [
+            { type: "text", value: "/*" },
+            space,
+            { type: "text", value: "extra" },
+            space,
+            { type: "text", value: "content*/" },
+          ],
+        },
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-s"] },
+          children: [{ type: "text", value: "}" }],
+        },
+        { type: "text", value: "\n" },
+      ],
+    },
+    {
+      properties: { className: ["imp-l"] },
+      tagName: "div",
+      type: "element",
+      children: [
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-s"] },
+          children: [{ type: "text", value: "{" }],
+        },
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-c"] },
+          children: [
+            { type: "text", value: "/*" },
+            space,
+            { type: "text", value: "normal" },
+            space,
+            { type: "text", value: "comment" },
+            space,
+            { type: "text", value: "*/" },
+          ],
+        },
+        {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["pl-s"] },
+          children: [{ type: "text", value: "}" }],
+        },
+        { type: "text", value: "\n" },
       ],
     },
   ]);
