@@ -10,6 +10,10 @@ Versioning].
 
 ## Unreleased
 
+### Changed
+
+- Added updated `source.ts` and `source.tsx` grammars.
+
 ## [v0.11.1] - 2025-07-28
 
 [v0.11.1]: https://github.com/ezzatron/impasto/releases/tag/v0.11.1
