@@ -10,6 +10,10 @@ Versioning].
 
 ## Unreleased
 
+## [v0.11.3] - 2025-07-29
+
+[v0.11.3]: https://github.com/ezzatron/impasto/releases/tag/v0.11.3
+
 ### Fixed
 
 - Fixed type errors in the test suite that broke the previous release
