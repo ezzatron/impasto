@@ -10,6 +10,11 @@ Versioning].
 
 ## Unreleased
 
+### Fixed
+
+- Fixed property name highlighting in `source.js`, `source.ts`, and `source.tsx`
+  grammars.
+
 ## [v0.11.3] - 2025-07-29
 
 [v0.11.3]: https://github.com/ezzatron/impasto/releases/tag/v0.11.3
