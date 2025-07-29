@@ -1,10 +1,10 @@
 import type { Element } from "hast";
 import common from "impasto/lang/common";
-import type { LoadedCode } from "impasto/loader";
 import { resolve } from "node:path";
 import { expect, it } from "vitest";
-import { webpack, type Compiler } from "webpack";
+import { webpack } from "webpack";
 import { rootToHTML } from "../../hast.js";
+import { compile } from "./compile.js";
 
 const artifactsPath = resolve(import.meta.dirname, "../../../artifacts");
 const outputDirPath = resolve(artifactsPath, "loader/output");
@@ -413,39 +413,3 @@ it("throws if no grammars are provided", async () => {
     "options misses the property 'grammars'",
   );
 });
-
-async function compile(compiler: Compiler): Promise<LoadedCode> {
-  return new Promise((resolve, reject) => {
-    compiler.run((error, stats) => {
-      if (!stats) {
-        reject(error);
-
-        return;
-      }
-
-      if (stats.hasErrors()) {
-        reject(
-          new Error(stats.toJson().errors?.[0]?.message ?? "Unknown error"),
-        );
-
-        return;
-      }
-
-      const source = stats
-        .toJson({ source: true })
-        ?.modules?.[0]?.source?.toString();
-
-      if (typeof source !== "string") {
-        reject(new Error("No source found in stats"));
-
-        return;
-      }
-
-      try {
-        resolve(JSON.parse(source.slice(15, -1)));
-      } catch (error) {
-        reject(error);
-      }
-    });
-  });
-}
