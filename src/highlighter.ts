@@ -7,8 +7,9 @@ import type { Root } from "hast";
  *
  * @see {@link createStarryNight}
  */
-export interface Highlighter
-  extends Awaited<ReturnType<typeof createStarryNight>> {
+export interface Highlighter extends Awaited<
+  ReturnType<typeof createStarryNight>
+> {
   /**
    * Get the grammar scope (such as `text.md`) associated with a grammar name
    * (such as `markdown`) or grammar extension (such as `.md`).
