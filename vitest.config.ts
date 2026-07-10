@@ -1,10 +1,11 @@
-import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 const isCI = process.env.CI === "true";
 
 export default defineConfig({
-  plugins: [tsconfigPaths()],
+  resolve: {
+    tsconfigPaths: true,
+  },
   test: {
     watch: false,
     testTimeout: isCI ? 10000 : 1000,
