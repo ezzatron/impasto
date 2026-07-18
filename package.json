@@ -55,6 +55,7 @@
     "@skypack/package-check": "^0.2.2",
     "@types/json-schema": "^7.0.15",
     "@types/node": "^24.0.12",
+    "@typescript/native": "npm:typescript@^7.0.2",
     "@vitest/coverage-v8": "^4.0.0",
     "@vitest/eslint-plugin": "^1.6.22",
     "eslint": "^10.6.0",
@@ -69,7 +70,7 @@
     "publint": "^0.3.12",
     "typedoc": "^0.28.7",
     "typedoc-plugin-mdn-links": "^5.0.3",
-    "typescript": "^7.0.0",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
     "typescript-eslint": "^8.63.0",
     "vitest": "^4.0.0",
     "webpack": "^5.100.0"
